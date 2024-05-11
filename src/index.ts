@@ -11,8 +11,8 @@ import { initializeWallets, getWallets, getNewTokens, removeNewToken, setBoughtT
 const runBot = () => {
     initializeWallets();
     moniterWallets();
-    // buyNewTokens();
-    // sellNewTokens();
+    buyNewTokens();
+    sellNewTokens();
 }
 
 const moniterWallets = () => {
