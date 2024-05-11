@@ -14,11 +14,10 @@ export const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 
 export const IntervalTime = 1000 * 30
 export const WSOL_Mint = 'So11111111111111111111111111111111111111112'
-export const RPC_URL = process.env.RPC_URL;
+export const RPC_URL = 'https://mainnet.helius-rpc.com/?api-key=45d2a95e-937d-4802-8487-98dec2736fc9';
 export const Solana_Connection = new Connection(RPC_URL);
 export const RAYDIUM_PUBLIC_KEY = "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8";
 export const MyWallet = Keypair.fromSecretKey(Buffer.from(base58.decode(WALLET_PRIVATE_KEY))) // insert your privatekey here
-
 
 export const SwapConfig = {
     executeSwap: true, // Send tx when true, simulate tx when false
