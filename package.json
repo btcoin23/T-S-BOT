@@ -1,0 +1,30 @@
+{
+  "name": "t-s-bot",
+  "version": "1.0.0",
+  "description": "Solana Trading Sniper Bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node build/index.js",
+    "ts-start": "ts-node ./src/index.ts",
+    "build": "tsc",
+    "clean": "tsc --build --clean",
+    "e-moniter": "ts-node ./src/moniterWallet.ts",
+    "e-mint": "ts-node ./src/checkTokenMint.ts",
+    "e-pool": "ts-node ./src/checkNewPool.ts",
+    "e-price": "ts-node ./src/getPrice.ts",
+    "e-tx": "ts-node ./src/checkTxResult.ts",
+    "e-swap": "ts-node ./src/swap.ts"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.29.0",
+    "@raydium-io/raydium-sdk": "^1.3.1-beta.50",
+    "@solana/spl-token": "^0.4.1",
+    "bs58": "^5.0.0",
+    "dotenv": "^16.4.5",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "ts-node": "^10.9.2"
+  }
+}
