@@ -40,7 +40,7 @@ const buyNewTokens = () => {
                 setBoughtToken(bt.Mint);
             }
         })
-    }, IntervalTime * 2)
+    }, IntervalTime)
 }
 
 const sellNewTokens = () => {
@@ -62,7 +62,7 @@ const sellNewTokens = () => {
                 }
             }
         })
-    }, IntervalTime * 2)
+    }, IntervalTime)
 }
 
 export async function getWalletTokenAccount(connection: Connection, wallet: PublicKey): Promise<TokenAccount[]> {
