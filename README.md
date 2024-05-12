@@ -44,6 +44,6 @@ export const WALLET_PRIVATE_KEY = '<Your Wallet Private Key>'; // your wallet pr
 Then run:
 
 ```sh
-yarn start
+yarn ts-start
 ```
 ## Version 1.0,   11/5/2024
