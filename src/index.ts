@@ -7,7 +7,7 @@ import { Connection, PublicKey } from '@solana/web3.js';
 import Decimal from 'decimal.js';
 import { getPrice } from "./getPrice";
 
-import { initializeWallets, addNewToken, getWallets, getNewTokens, removeNewToken, setBoughtToken } from "./data";
+import { initializeWallets, addNewToken, getWallets, getNewTokens, removeNewToken, setBoughtToken, setWaitingToken } from "./data";
 
 const runBot = async() => {
     initializeWallets();
@@ -34,10 +34,13 @@ const buyNewTokens = () => {
     setInterval(() => {
         getNewTokens().forEach(async(bt) => {
             console.log(`- Checking new token to buy: ${bt.Mint}`);
+            if(!bt.Waiting)
             if (!bt.Bought) {
+                setWaitingToken(bt.Mint, true)
                 await swap(WSOL_Mint, bt.Mint, TokenBuyAmount);
                 console.log(`** Bought new Token-----------${bt.Mint}`);
                 setBoughtToken(bt.Mint);
+                setWaitingToken(bt.Mint, false);
             }
         })
     }, IntervalTime)
@@ -47,10 +50,12 @@ const sellNewTokens = () => {
     setInterval(() => {
         getNewTokens().forEach(async (bt) => {
             console.log(bt.Mint);
+            if(!bt.Waiting)
             if (bt.Bought) {
                 const curPrice = await getPrice(bt.Mint);
                 if (curPrice >= bt.Price * (TakeProfit + 1)) {
                     console.log(`- Cur price: ${curPrice},  Old price: ${bt.Price}`)
+                    setWaitingToken(bt.Mint, true);
                     const walletTokenInfs = await getWalletTokenAccount(Solana_Connection, MyWallet.publicKey);
                     const acc = walletTokenInfs.find(account => account.accountInfo.mint.toString() === bt.Mint.toString());
                     const bal = acc.accountInfo.amount
@@ -59,6 +64,7 @@ const sellNewTokens = () => {
                     console.log(`** Sold new Token-----------${bt.Mint}`);
 
                     removeNewToken(bt.Mint);
+                    setWaitingToken(bt.Mint, false);
                 }
             }
         })
