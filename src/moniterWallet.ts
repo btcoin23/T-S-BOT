@@ -16,7 +16,7 @@ export async function checkBalance(address: PublicKey) {
 
 // Function to monitor transactions of a given address
 export async function moniterWallet(address: PublicKey) {
-    console.log(`---------- ---------- ---------- Checking transactions of wallet: ${address.toString()}... ---------- ---------- ----------`);
+    console.log(`---------- ---------- Checking transactions of wallet: ${address.toString()} ... ---------- ----------`);
     let signatureInfo = await Solana_Connection.getSignaturesForAddress(address, {limit: 1});
     let lastSignature = signatureInfo[0].signature;
 
@@ -29,9 +29,9 @@ export async function moniterWallet(address: PublicKey) {
                 lastSignature = signatureInfo[0].signature;
                 const sigArray = signatureInfo.filter(sig => !sig.err).map(sig => sig.signature);
                 const trxs = await Solana_Connection.getParsedTransactions(sigArray, { maxSupportedTransactionVersion: 0 });
-                const txs = trxs.filter(trx => trx.transaction)
+                const txs = trxs.filter(trx => trx?.transaction)
                 txs.forEach(async (tx, index) => {
-                    console.log(`\nTransaction ${index}: ${tx.transaction.signatures}`);
+                    // console.log(`\nTransaction ${index}: ${tx.transaction.signatures}`);
 
                     //check token transfer
                     const isTransferred: any = tx.transaction.message.instructions.find((item: any) =>
@@ -41,7 +41,7 @@ export async function moniterWallet(address: PublicKey) {
                         const txAmount = tx.meta.postBalances[0] - tx.meta.preBalances[0];
                         if (txAmount <= -ThresholdAmount * LAMPORTS_PER_SOL) {
                             const recipientPublicKey = tx.transaction.message.accountKeys[1].pubkey;
-                            console.log(` - Over ${ThresholdAmount} SOL transition is detected`);
+                            console.log(`\n * Over ${ThresholdAmount} SOL transition is detected: ${tx.transaction.signatures}`);
                             console.log(` - Recipient Address: ${recipientPublicKey}`);
                             console.log(` - Amount: ${-txAmount / LAMPORTS_PER_SOL} SOL`);
 
@@ -65,7 +65,7 @@ export async function moniterWallet(address: PublicKey) {
                         const newToken = isMinted.parsed.info.mint;
                         const totalSupply = isMinted.parsed.info.amount;
                         const newTokenInfo = await getMint(Solana_Connection, new PublicKey(newToken));
-                        console.log(`\n# New token is minted: ${newToken}, Decimal: ${newTokenInfo.decimals.toString()}, Total Supply: ${totalSupply.toString()}`);
+                        console.log(`\n * New token is minted: ${newToken}, Decimal: ${newTokenInfo.decimals.toString()}, Total Supply: ${totalSupply.toString()} from ${tx.transaction.signatures}`);
                     }
 
                     //check new Pool information
@@ -82,7 +82,7 @@ export async function moniterWallet(address: PublicKey) {
                         const baseDecimal = baseTokenInfo.decimals;
                         const quoteDecimal = quoteTokenInfo.decimals;
 
-                        console.log('\n# New Pool is created');
+                        console.log(`\n * New Pool is created from ${tx.transaction.signatures}`);
                         console.log(` - Base token: ${baseToken}, ${baseDecimal.toString()}`);
                         console.log(` - Quote token: ${quoteToken}, ${quoteDecimal.toString()}`);
 

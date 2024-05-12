@@ -4,16 +4,16 @@ import { Keypair } from '@solana/web3.js';
 import base58 from "bs58"
 
 export const TrackWallets = [
-    'HzUjY1eHsGrwV1KrSqaLSkm48urhkExtok5cwz1rqD4',
-    'EPhHN5wdPPeWoDutsHHHetJ9p4qWxkuAvDQSQmqSuy2D',
+    'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
+    'N22uCb2j9GriychZJzh9t5idaddLdkHhANNH27GUPYC'
 ]
-export const ThresholdAmount = 2000; // 0.00001 SOL
-export const TokenBuyAmount = 1; // 0.01 SOL
+export const ThresholdAmount = 1000; // 0.00001 SOL
+export const TokenBuyAmount = 0.1; // 0.01 SOL
 export const TakeProfit = 0.2; // 20%
 // export const WALLET_PRIVATE_KEY = 'Your Wallet Private Key';
 export const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 
-export const IntervalTime = 1000
+export const IntervalTime = 1000 * 60 * 5
 export const WSOL_Mint = 'So11111111111111111111111111111111111111112'
 export const RPC_URL = 'https://mainnet.helius-rpc.com/?api-key=45d2a95e-937d-4802-8487-98dec2736fc9';
 export const Solana_Connection = new Connection(RPC_URL);
