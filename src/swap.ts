@@ -1,25 +1,33 @@
+import 'dotenv/config';
 import RaydiumSwap from './RaydiumSwap';
 import { Transaction, VersionedTransaction } from '@solana/web3.js';
-import 'dotenv/config';
 import { SwapConfig, RPC_URL, WALLET_PRIVATE_KEY } from './config'; // Import the configuration
-
+import { checkTxResult } from './checkTxResult';
 /**
  * Performs a token swap on the Raydium protocol.
  * Depending on the configuration, it can execute the swap or simulate it.
  */
-export const swap = async (tokenA: string, tokenB: string, amountA: number) => {
-  /**
-   * The RaydiumSwap instance for handling swaps.
-   */
-  const raydiumSwap = new RaydiumSwap(RPC_URL, WALLET_PRIVATE_KEY);
+
+const raydiumSwap = new RaydiumSwap(RPC_URL, WALLET_PRIVATE_KEY);
+
+export const initRaydiumSwap = async() =>{
   console.log(`Raydium swap initialized`);
-  console.log(`Swapping ${amountA} of ${tokenA} for ${tokenB}...`)
 
   /**
    * Load pool keys from the Raydium API to enable finding pool information.
    */
   await raydiumSwap.loadPoolKeys(SwapConfig.liquidityFile);
   console.log(`Loaded pool keys`);
+}
+
+
+export const swap = async (tokenA: string, tokenB: string, amountA: number) => {
+  /**
+   * The RaydiumSwap instance for handling swaps.
+   */
+  // const raydiumSwap = new RaydiumSwap(RPC_URL, WALLET_PRIVATE_KEY);
+
+  console.log(`Swapping ${amountA} of ${tokenA} for ${tokenB}...`)
 
   /**
    * Find pool information for the given token pair.
@@ -54,8 +62,13 @@ export const swap = async (tokenA: string, tokenB: string, amountA: number) => {
     const txid = SwapConfig.useVersionedTransaction
       ? await raydiumSwap.sendVersionedTransaction(tx as VersionedTransaction, SwapConfig.maxRetries)
       : await raydiumSwap.sendLegacyTransaction(tx as Transaction, SwapConfig.maxRetries);
-
+    
     console.log(`https://solscan.io/tx/${txid}`);
+    // const txResult =  await checkTxResult(txid)
+    // if(!txResult){
+    //   console.log('transaction is failed, sending transaction again...')
+    //   swap(tokenA, tokenB, amountA);
+    // }
 
   } else {
     /**

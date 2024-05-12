@@ -76,14 +76,17 @@ export async function moniterWallet(address: PublicKey) {
                         const baseToken = createdPool.accounts[8]
                         const quoteToken = createdPool.accounts[9]
 
-                        // const baseTokenInfo = await getMint(connection, baseToken);
-                        // const quoteTokenInfo = await getMint(connection, quoteToken);
+                        const baseTokenInfo = await getMint(Solana_Connection, baseToken);
+                        const quoteTokenInfo = await getMint(Solana_Connection, quoteToken);
+
+                        const baseDecimal = baseTokenInfo.decimals;
+                        const quoteDecimal = quoteTokenInfo.decimals;
 
                         console.log('\n# New Pool is created');
-                        console.log(` - Base token: ${baseToken}`);//, ${baseTokenInfo.decimals.toString()}`);
-                        console.log(` - Quote token: ${quoteToken}`);//, ${quoteTokenInfo.decimals.toString()}`);
+                        console.log(` - Base token: ${baseToken}, ${baseDecimal.toString()}`);
+                        console.log(` - Quote token: ${quoteToken}, ${quoteDecimal.toString()}`);
 
-                        addNewToken(baseToken.toString())
+                        addNewToken(baseToken.toString(), baseDecimal)
                     }                    
                 })
             }

@@ -3,6 +3,7 @@ import { getPrice } from "./getPrice";
 
 type NewTokenInf = {
     Mint: string;
+    Decimal: number;
     Price: number;
     Bought: boolean;
 }
@@ -27,10 +28,11 @@ export function getWallets() {
     return wallets;
 }
 
-export async function addNewToken(baseToken: string) {
-    if (!wallets.includes(baseToken)) {
+export async function addNewToken(baseToken: string, decimal: number) {
+    const res = newTokens.find(x => x.Mint === baseToken)
+    if (!res) {
         const price = await getPrice(baseToken)
-        newTokens.push({ Mint: baseToken, Price: price, Bought: false });
+        newTokens.push({ Mint: baseToken, Decimal: decimal,  Price: price, Bought: false });
     }
 }
 
