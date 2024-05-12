@@ -6,6 +6,7 @@ type NewTokenInf = {
     Decimal: number;
     Price: number;
     Bought: boolean;
+    Waiting: boolean;
 }
 
 let wallets: string[] = [];
@@ -32,7 +33,7 @@ export async function addNewToken(baseToken: string, decimal: number) {
     const res = newTokens.find(x => x.Mint === baseToken)
     if (!res) {
         const price = await getPrice(baseToken)
-        newTokens.push({ Mint: baseToken, Decimal: decimal,  Price: price, Bought: false });
+        newTokens.push({ Mint: baseToken, Decimal: decimal,  Price: price, Bought: false, Waiting: false });
     }
 }
 
@@ -42,6 +43,10 @@ export function removeNewToken(baseToken: string) {
 
 export function setBoughtToken(baseToken: string) {
     newTokens.find(x => x.Mint === baseToken).Bought = true;
+}
+
+export function setWaitingToken(baseToken: string, value: boolean) {
+    newTokens.find(x => x.Mint === baseToken).Waiting = value;
 }
 
 export function getNewTokens() {
