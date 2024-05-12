@@ -29,7 +29,7 @@ Set some configuration settings
 export const TrackWallets = [
     'HzUjY1eHsGrwV1KrSqaLSkm48urhkExtok5cwz1rqD4',
     'EPhHN5wdPPeWoDutsHHHetJ9p4qWxkuAvDQSQmqSuy2D',
-]
+] // Wallet addresses you want to track
 
 export const ThresholdAmount = 10000; // 10000 SOL
 
