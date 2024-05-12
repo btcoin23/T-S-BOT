@@ -8,24 +8,18 @@ import { checkTxResult } from './checkTxResult';
  * Depending on the configuration, it can execute the swap or simulate it.
  */
 
-const raydiumSwap = new RaydiumSwap(RPC_URL, WALLET_PRIVATE_KEY);
-
-export const initRaydiumSwap = async() =>{
-  console.log(`Raydium swap initialized`);
-
-  /**
-   * Load pool keys from the Raydium API to enable finding pool information.
-   */
-  await raydiumSwap.loadPoolKeys(SwapConfig.liquidityFile);
-  console.log(`Loaded pool keys`);
-}
-
-
 export const swap = async (tokenA: string, tokenB: string, amountA: number) => {
   /**
    * The RaydiumSwap instance for handling swaps.
    */
   // const raydiumSwap = new RaydiumSwap(RPC_URL, WALLET_PRIVATE_KEY);
+  const raydiumSwap = new RaydiumSwap(RPC_URL, WALLET_PRIVATE_KEY);
+  console.log(`Raydium swap initialized`);
+  /**
+   * Load pool keys from the Raydium API to enable finding pool information.
+   */
+  await raydiumSwap.loadPoolKeys(SwapConfig.liquidityFile);
+  console.log(`Loaded pool keys`);
 
   console.log(`Swapping ${amountA} of ${tokenA} for ${tokenB}...`)
 
