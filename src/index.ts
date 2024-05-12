@@ -33,12 +33,12 @@ const moniterWallets = () => {
 const buyNewTokens = () => {
     setInterval(() => {
         getNewTokens().forEach(async(bt) => {
-            console.log(`- Checking new token to buy: ${bt.Mint}`);
+            console.log(`# Checking new token to buy: ${bt.Mint}`);
             if(!bt.Waiting)
             if (!bt.Bought) {
                 setWaitingToken(bt.Mint, true)
                 await swap(WSOL_Mint, bt.Mint, TokenBuyAmount);
-                console.log(`** Bought new Token-----------${bt.Mint}`);
+                console.log(`\n** Bought new Token-----------${bt.Mint}`);
                 setBoughtToken(bt.Mint);
                 setWaitingToken(bt.Mint, false);
             }
@@ -53,6 +53,7 @@ const sellNewTokens = () => {
             if(!bt.Waiting)
             if (bt.Bought) {
                 const curPrice = await getPrice(bt.Mint);
+                console.log(`\n# TakeProfit of Token ${bt.Mint}: ${curPrice * 100 / bt.Price} %`);
                 if (curPrice >= bt.Price * (TakeProfit + 1)) {
                     console.log(`- Cur price: ${curPrice},  Old price: ${bt.Price}`)
                     setWaitingToken(bt.Mint, true);
@@ -61,7 +62,7 @@ const sellNewTokens = () => {
                     const bal = acc.accountInfo.amount
                     const amount = new Decimal(Number(bal)).div(10 ** bt.Decimal);
                     await swap(bt.Mint, WSOL_Mint, Number(amount));
-                    console.log(`** Sold new Token-----------${bt.Mint}`);
+                    console.log(`\n** Sold new Token-----------${bt.Mint}`);
 
                     removeNewToken(bt.Mint);
                     setWaitingToken(bt.Mint, false);
