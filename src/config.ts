@@ -10,7 +10,8 @@ export const TrackWallets = [
 export const ThresholdAmount = 0.00001; // 0.00001 SOL
 export const TokenBuyAmount = 0.01; // 0.01 SOL
 export const TakeProfit = 0.2; // 20%
-export const WALLET_PRIVATE_KEY = '<Your Wallet Private Key>'; // your wallet private key
+export const WALLET_PRIVATE_KEY = 'Your Wallet Private Key';
+// export const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 
 export const IntervalTime = 1000 * 60
 export const WSOL_Mint = 'So11111111111111111111111111111111111111112'
