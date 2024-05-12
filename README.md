@@ -16,7 +16,6 @@ Before you begin, ensure you have met the following requirements:
 - Node.js installed (v18 or above recommended)
 - Yarn
 - A Solana wallet with some SOL for testing the swap
-- An environment file (.env) with your RPC URL and WALLET_PRIVATE_KEY
 
 
 ## Configurations
