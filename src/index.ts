@@ -33,10 +33,10 @@ const moniterWallets = () => {
 const buyNewTokens = () => {
     setInterval(() => {
         getNewTokens().forEach(async(bt) => {
-            console.log(`Checking new token: ${bt.Mint}`);
+            console.log(`- Checking new token to buy: ${bt.Mint}`);
             if (!bt.Bought) {
                 await swap(WSOL_Mint, bt.Mint, TokenBuyAmount);
-                console.log('bought-----------');
+                console.log(`** Bought new Token-----------${bt.Mint}`);
                 setBoughtToken(bt.Mint);
             }
         })
@@ -49,15 +49,15 @@ const sellNewTokens = () => {
             console.log(bt.Mint);
             if (bt.Bought) {
                 const curPrice = await getPrice(bt.Mint);
-                if (curPrice >= bt.Price * (TakeProfit)) {
-                    console.log(`cur price: ${curPrice},  price: ${bt.Price}`)
+                if (curPrice >= bt.Price * (TakeProfit + 1)) {
+                    console.log(`- Cur price: ${curPrice},  Old price: ${bt.Price}`)
                     const walletTokenInfs = await getWalletTokenAccount(Solana_Connection, MyWallet.publicKey);
                     const acc = walletTokenInfs.find(account => account.accountInfo.mint.toString() === bt.Mint.toString());
                     const bal = acc.accountInfo.amount
                     const amount = new Decimal(Number(bal)).div(10 ** bt.Decimal);
-                    console.log(`here----> ${Number(amount)}`);
                     await swap(bt.Mint, WSOL_Mint, Number(amount));
-                    console.log('sold-----------');
+                    console.log(`** Sold new Token-----------${bt.Mint}`);
+
                     removeNewToken(bt.Mint);
                 }
             }
