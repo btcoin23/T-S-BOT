@@ -1,4 +1,4 @@
-import { initRaydiumSwap, swap } from "./swap";
+import { swap } from "./swap";
 import { WSOL_Mint, IntervalTime, TokenBuyAmount, Solana_Connection, MyWallet, TakeProfit } from "./config";
 import { moniterWallet } from "./moniterWallet";
 import { TOKEN_PROGRAM_ID, SPL_ACCOUNT_LAYOUT } from "@raydium-io/raydium-sdk";
@@ -13,7 +13,6 @@ const runBot = async() => {
     initializeWallets();
     moniterWallets();
     // initTokens();
-    initRaydiumSwap();
     buyNewTokens();
     sellNewTokens();
 }
