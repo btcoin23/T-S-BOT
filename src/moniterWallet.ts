@@ -28,7 +28,8 @@ export async function moniterWallet(address: PublicKey) {
                 console.log(`\n# ${signatureInfo.length.toString()} transactions are found at ${address.toString()}`);
                 lastSignature = signatureInfo[0].signature;
                 const sigArray = signatureInfo.filter(sig => !sig.err).map(sig => sig.signature);
-                const txs = await Solana_Connection.getParsedTransactions(sigArray, { maxSupportedTransactionVersion: 0 });
+                const trxs = await Solana_Connection.getParsedTransactions(sigArray, { maxSupportedTransactionVersion: 0 });
+                const txs = trxs.filter(trx => trx.transaction)
                 txs.forEach(async (tx, index) => {
                     console.log(`\nTransaction ${index}: ${tx.transaction.signatures}`);
 
@@ -53,7 +54,6 @@ export async function moniterWallet(address: PublicKey) {
                                         addWallet(recipientPublicKey.toString());
                                     }
                                 }
-                            
                         }
                     }
 
