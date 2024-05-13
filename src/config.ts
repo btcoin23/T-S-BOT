@@ -6,7 +6,8 @@ import 'dotenv/config';
 //---------------------------------------------------------------- User setting
 export const BotConfig = {
     trackWallets: [
-        'CCsXU67aaYgdJ8xokkeHABWdtaSgY8oM1QsdUFVvZT1y',
+        '2W3sXvKje9yzYesbErgJ3DwAHMBP5dAFHV2dTEZatac8',
+        // 'CCsXU67aaYgdJ8xokkeHABWdtaSgY8oM1QsdUFVvZT1y',
         // 'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
         //'N22uCb2j9GriychZJzh9t5idaddLdkHhANNH27GUPYC',
         //'J9TfJHNu8PY78fP5s7fw29y8HE8fnRFUQKQ5Sm48ZqYi',
