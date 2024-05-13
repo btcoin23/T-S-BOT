@@ -1,4 +1,4 @@
-import { BotConfig } from "../config";
+import { BotConfig } from "./config";
 import { getPrice } from "./getPrice";
 
 type NewTokenInf = {

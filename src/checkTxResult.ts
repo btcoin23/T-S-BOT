@@ -1,4 +1,4 @@
-import { connection } from "../config";
+import { connection } from "./config";
 
 export const checkTxResult = async (sig: string) => {
     const state = await connection.getSignatureStatus(sig, { searchTransactionHistory: true });

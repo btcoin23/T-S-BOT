@@ -21,7 +21,7 @@ import {
   connection,
   makeTxVersion,
   wallet,
-} from '../config';
+} from './config';
 
 export async function sendTx(
   connection: Connection,

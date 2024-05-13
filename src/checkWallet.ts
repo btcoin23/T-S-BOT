@@ -1,5 +1,5 @@
 import { PublicKey, LAMPORTS_PER_SOL, PartiallyDecodedInstruction } from '@solana/web3.js';
-import { RAYDIUM_PUBLIC_KEY, connection, BotConfig } from '../config';
+import { RAYDIUM_PUBLIC_KEY, connection, BotConfig } from './config';
 import { getMint } from '@solana/spl-token';
 import { addToken, addWallet, getAllWallets } from './data';
 // import { addNewToken, addWallet } from './run';

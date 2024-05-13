@@ -15,7 +15,7 @@ import {
   DEFAULT_TOKEN,
   makeTxVersion,
   wallet
-} from '../config';
+} from './config';
 import { formatAmmKeysById } from './formatAmmKeysById';
 import {
   buildAndSendTx,

@@ -1,5 +1,5 @@
 import { PartiallyDecodedInstruction } from '@solana/web3.js';
-import { RAYDIUM_PUBLIC_KEY, connection } from '../config';
+import { RAYDIUM_PUBLIC_KEY, connection } from './config';
 import { getMint } from '@solana/spl-token';
 export const checkNewPool = async (sig: any) => {
     const tx = await connection.getParsedTransaction(sig, { maxSupportedTransactionVersion: 0 });

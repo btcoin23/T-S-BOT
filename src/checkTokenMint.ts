@@ -1,6 +1,6 @@
 import { PublicKey } from '@solana/web3.js';
 import { getMint } from '@solana/spl-token';
-import { connection } from '../config';
+import { connection } from './config';
 
 export const checkTokenMint = async (sig: string) => {
     const tx = await connection.getParsedTransaction(sig, { maxSupportedTransactionVersion: 0 });

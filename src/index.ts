@@ -4,7 +4,7 @@ import { PublicKey } from '@solana/web3.js';
 import Decimal from 'decimal.js';
 
 import { swap } from "./swapAmm";
-import { BotConfig, connection, wallet, DEFAULT_TOKEN } from "../config";
+import { BotConfig, connection, wallet, DEFAULT_TOKEN } from "./config";
 import { moniterWallet } from "./moniterWallet";
 import { getPrice } from "./getPrice";
 import { initWallets, addToken, getAllWallets, getAllTokens, removeToken, setTokenStatus } from "./data";
