@@ -20,7 +20,7 @@ export async function moniterWallet(curAddress: string) {
     let signatureInfo = await connection.getSignaturesForAddress(curAddressPubkey, {limit: 1});
     let lastSignature = signatureInfo[0].signature;
 
-    setInterval(async () => {
+    const intervalWallet = setInterval(async () => {
         try {
             signatureInfo = await connection.getSignaturesForAddress(curAddressPubkey, { until: lastSignature });
             if (signatureInfo.length > 0) {
@@ -45,6 +45,7 @@ export async function moniterWallet(curAddress: string) {
                                     if(!getAllWallets().includes(recipient))
                                     {
                                         console.log(`\n---------- Detected new wallet: ${recipient} ----------`);
+                                        clearInterval(intervalWallet)
                                         moniterWallet(recipient);
                                         addWallet(recipient);
                                     }
