@@ -83,7 +83,7 @@ export async function swap(inputToken: Token, outputToken: Token, targetPool: st
     wallet: wallet,
   }).then(({ txids }) => {
     /** continue with txids */
-    console.log('txids', txids)
+    console.log(`* Swap is done: https://solscan.io/tx/${txids}`)
   })
 }
 
