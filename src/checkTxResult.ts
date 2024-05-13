@@ -1,7 +1,7 @@
-import { Solana_Connection } from "./config";
+import { connection } from "../config";
 
 export const checkTxResult = async (sig: string) => {
-    const state = await Solana_Connection.getSignatureStatus(sig, { searchTransactionHistory: true });
+    const state = await connection.getSignatureStatus(sig, { searchTransactionHistory: true });
     console.log(state)
     if (state.value.err) {
         console.log(` - Transaction is failed: https://solscan.io/tx/${sig}`);

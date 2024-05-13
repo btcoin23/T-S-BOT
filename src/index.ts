@@ -1,85 +1,70 @@
-import { swap } from "./swap";
-import { WSOL_Mint, IntervalTime, TokenBuyAmount, Solana_Connection, MyWallet, TakeProfit } from "./config";
-import { moniterWallet } from "./moniterWallet";
-import { TOKEN_PROGRAM_ID, SPL_ACCOUNT_LAYOUT } from "@raydium-io/raydium-sdk";
-import { TokenAccount } from "@raydium-io/raydium-sdk";
-import { Connection, PublicKey } from '@solana/web3.js';
+// import { swap } from "./swap";
+import { TOKEN_PROGRAM_ID, Token } from "@raydium-io/raydium-sdk";
+import { PublicKey } from '@solana/web3.js';
 import Decimal from 'decimal.js';
-import { getPrice } from "./getPrice";
 
-import { initializeWallets, addNewToken, getWallets, getNewTokens, removeNewToken, setBoughtToken, setWaitingToken } from "./data";
+import { swap } from "./swapAmm";
+import { BotConfig, connection, wallet, DEFAULT_TOKEN } from "../config";
+import { moniterWallet } from "./moniterWallet";
+import { getPrice } from "./getPrice";
+import { initWallets, addToken, getAllWallets, getAllTokens, removeToken, setTokenStatus } from "./data";
+import { getWalletTokenAccount } from './util';
 
 const runBot = async() => {
-    initializeWallets();
+    initWallets();
     moniterWallets();
-    // initTokens();
     buyNewTokens();
     sellNewTokens();
 }
 
-const initTokens = () => {
-    addNewToken('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', 6) //USDT
-    addNewToken('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', 6) //USDC
-    // addNewToken('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v') //USDC
-}
-
 const moniterWallets = () => {
-    getWallets().forEach((wal: any) => {
-        moniterWallet(new PublicKey(wal));
+    getAllWallets().forEach((wal: any) => {
+        moniterWallet(wal);
     })
 }
 
 const buyNewTokens = () => {
     setInterval(() => {
-        getNewTokens().forEach(async(bt) => {
-            console.log(`# Checking new token to buy: ${bt.Mint}`);
-            if(!bt.Waiting)
-            if (!bt.Bought) {
-                setWaitingToken(bt.Mint, true)
-                await swap(WSOL_Mint, bt.Mint, TokenBuyAmount);
-                console.log(`\n** Bought new Token-----------${bt.Mint}`);
-                setBoughtToken(bt.Mint);
-                setWaitingToken(bt.Mint, false);
+        getAllTokens().forEach(async(bt) => {
+            if(bt.Status === "None")
+            {
+                setTokenStatus(bt.Mint, "Wait")
+
+                const tokenA = DEFAULT_TOKEN.WSOL
+                const tokenB = new Token(TOKEN_PROGRAM_ID, new PublicKey(bt.Mint), bt.Decimal)
+                await swap(tokenA, tokenB, bt.AMMID, BotConfig.tokenSwapAmount);
+
+                console.log(`\n* Bought new token: ${bt.Mint}`);
+                setTokenStatus(bt.Mint, "Bought");
             }
         })
-    }, IntervalTime)
+    }, BotConfig.intervalTime)
 }
 
 const sellNewTokens = () => {
     setInterval(() => {
-        getNewTokens().forEach(async (bt) => {
-            console.log(bt.Mint);
-            if(!bt.Waiting)
-            if (bt.Bought) {
+        getAllTokens().forEach(async (bt) => {
+            if (bt.Status === "Bought") {
                 const curPrice = await getPrice(bt.Mint);
-                console.log(`\n# TakeProfit of Token ${bt.Mint}: ${curPrice * 100 / bt.Price} %`);
-                if (curPrice >= bt.Price * (TakeProfit + 1)) {
-                    console.log(`- Cur price: ${curPrice},  Old price: ${bt.Price}`)
-                    setWaitingToken(bt.Mint, true);
-                    const walletTokenInfs = await getWalletTokenAccount(Solana_Connection, MyWallet.publicKey);
-                    const acc = walletTokenInfs.find(account => account.accountInfo.mint.toString() === bt.Mint.toString());
+                console.log(`\n* TakeProfit of Token ${bt.Mint}: ${curPrice * 100 / bt.Price} %`);
+                if (curPrice >= bt.Price * BotConfig.takeProfit) {
+                    setTokenStatus(bt.Mint, "Wait")
+                    const walletTokenInfs = await getWalletTokenAccount(connection, wallet.publicKey);
+                    const acc = walletTokenInfs.find(account => account.accountInfo.mint.toString() === bt.Mint);
                     const bal = acc.accountInfo.amount
                     const amount = new Decimal(Number(bal)).div(10 ** bt.Decimal);
-                    await swap(bt.Mint, WSOL_Mint, Number(amount));
-                    console.log(`\n** Sold new Token-----------${bt.Mint}`);
+                    
+                    const tokenA = new Token(TOKEN_PROGRAM_ID, new PublicKey(bt.Mint), bt.Decimal)
+                    const tokenB = DEFAULT_TOKEN.WSOL
+                    await swap(tokenA, tokenB, bt.AMMID, Number(amount));
 
-                    removeNewToken(bt.Mint);
-                    setWaitingToken(bt.Mint, false);
+                    console.log(`\n* Sold new Token: ${bt.Mint}`);
+
+                    setTokenStatus(bt.Mint, "Sold");
                 }
             }
         })
-    }, IntervalTime)
-}
-
-export async function getWalletTokenAccount(connection: Connection, wallet: PublicKey): Promise<TokenAccount[]> {
-    const walletTokenAccount = await connection.getTokenAccountsByOwner(wallet, {
-        programId: TOKEN_PROGRAM_ID,
-    });
-    return walletTokenAccount.value.map((i) => ({
-        pubkey: i.pubkey,
-        programId: i.account.owner,
-        accountInfo: SPL_ACCOUNT_LAYOUT.decode(i.account.data),
-    }));
+    }, BotConfig.intervalTime)
 }
 
 

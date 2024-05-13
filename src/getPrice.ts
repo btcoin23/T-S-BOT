@@ -6,5 +6,5 @@ export const getPrice = async (tokenMint: string) => {
     // console.log(`- Token: ${tokenMint}, Price: ${price}`);
     return Number(price);
 }
-// const token = 'CAUbsyj4t4KiU6SwxAiehkNZCzHfNWcSmu49tF8czsAW'
+// const token = 'tgw7RiFwLUsM9dHNGj2mdAZjuivdsk8FH9RESxFX8LX'
 // getPrice(token);

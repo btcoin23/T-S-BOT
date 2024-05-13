@@ -1,22 +1,22 @@
 import { PartiallyDecodedInstruction } from '@solana/web3.js';
-import { RAYDIUM_PUBLIC_KEY, Solana_Connection } from './config';
-// import { getMint } from '@solana/spl-token';
+import { RAYDIUM_PUBLIC_KEY, connection } from '../config';
+import { getMint } from '@solana/spl-token';
 export const checkNewPool = async (sig: any) => {
-    const tx = await Solana_Connection.getParsedTransaction(sig, { maxSupportedTransactionVersion: 0 });
+    const tx = await connection.getParsedTransaction(sig, { maxSupportedTransactionVersion: 0 });
     const res = tx.transaction.message.instructions.find((item: any) =>
         item.programId.toString() === RAYDIUM_PUBLIC_KEY
-    ) as PartiallyDecodedInstruction // creating new pool transaction
+    ) as PartiallyDecodedInstruction
 
     if (res) {
-        const baseToken = res.accounts[8] // Zuzu
-        const quoteToken = res.accounts[9] // SOL
+        const baseToken = res.accounts[8]
+        const quoteToken = res.accounts[9]
 
-        // const baseTokenInfo = await getMint(connection, baseToken);
-        // const quoteTokenInfo = await getMint(connection, quoteToken);
+        const baseTokenInfo = await getMint(connection, baseToken);
+        const quoteTokenInfo = await getMint(connection, quoteToken);
 
         console.log(' - New Pool is founded');
-        console.log(` - Base token: ${baseToken}`);//, ${baseTokenInfo.decimals.toString()}`);
-        console.log(` - Quote token: ${quoteToken}`);//, ${quoteTokenInfo.decimals.toString()}`);
+        console.log(` - Base token: ${baseToken}, ${baseTokenInfo.decimals.toString()}`);
+        console.log(` - Quote token: ${quoteToken}, ${quoteTokenInfo.decimals.toString()}`);
         return { baseToken, quoteToken }
     }
 }

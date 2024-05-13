@@ -1,54 +1,53 @@
-import { TrackWallets } from "./config";
+import { BotConfig } from "../config";
 import { getPrice } from "./getPrice";
 
 type NewTokenInf = {
     Mint: string;
+    AMMID: string;
     Decimal: number;
     Price: number;
-    Bought: boolean;
-    Waiting: boolean;
+    Status: string;
 }
 
-let wallets: string[] = [];
-let newTokens: NewTokenInf[] = [];
+let allWallets: string[] = [];
+let allTokens: NewTokenInf[] = [];
 
-export const initializeWallets = () => {
-    TrackWallets.forEach(wal => wallets.push(wal));
+export const initWallets = () => {
+    BotConfig.trackWallets.forEach(w => allWallets.push(w));
 }
 
-export function addWallet(wallet: string) {
-    if (!wallets.includes(wallet))
-        wallets.push(wallet);
+export function addWallet(w: string) {
+    if (!allWallets.includes(w))
+        allWallets.push(w);
 }
 
-export function removeWallet(wallet: string) {
-    wallets = wallets.filter(x => x !== wallet);
+export function removeWallet(w: string) {
+    allWallets = allWallets.filter(x => x!== w);
 }
 
-export function getWallets() {
-    return wallets;
+export function getAllWallets() {
+    return allWallets;
 }
 
-export async function addNewToken(baseToken: string, decimal: number) {
-    const res = newTokens.find(x => x.Mint === baseToken)
-    if (!res) {
-        const price = await getPrice(baseToken)
-        newTokens.push({ Mint: baseToken, Decimal: decimal,  Price: price, Bought: false, Waiting: false });
-    }
+export function addToken(t: string, ammId: string, d: number) {
+    const res = allTokens.find(x => x.Mint === t)
+    if (!res)
+        allTokens.push({ Mint: t, AMMID: ammId,  Decimal: d,  Price: 0, Status: "None" });
 }
 
-export function removeNewToken(baseToken: string) {
-    newTokens = newTokens.filter(x => x.Mint !== baseToken);
+export function removeToken(t: string) {
+    allTokens = allTokens.filter(x => x.Mint !== t);
 }
 
-export function setBoughtToken(baseToken: string) {
-    newTokens.find(x => x.Mint === baseToken).Bought = true;
+export function setTokenStatus(t: string, s: string) {
+    allTokens.find(x => x.Mint === t).Status = s;
 }
 
-export function setWaitingToken(baseToken: string, value: boolean) {
-    newTokens.find(x => x.Mint === baseToken).Waiting = value;
+export async function updateTokenPrice(t: string) {
+    const price = await getPrice(t)
+    allTokens.find(x => x.Mint === t).Price = price;
 }
 
-export function getNewTokens() {
-    return newTokens;
+export function getAllTokens() {
+    return allTokens;
 }

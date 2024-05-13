@@ -1,57 +1,52 @@
-import { getMint } from '@solana/spl-token';
 import { PublicKey, LAMPORTS_PER_SOL, PartiallyDecodedInstruction } from '@solana/web3.js';
-import { RAYDIUM_PUBLIC_KEY, Solana_Connection, ThresholdAmount, IntervalTime } from './config';
-import { addNewToken, addWallet, getWallets } from './data';
-// import { addNewToken, addWallet } from './run';
-// Function to check the balance of a given address
-export async function checkBalance(address: PublicKey) {
+import { getMint } from '@solana/spl-token';
+import { RAYDIUM_PUBLIC_KEY, connection, BotConfig } from '../config';
+import { addToken, addWallet, getAllWallets } from './data';
+
+export async function checkBalance(address: string) {
     try {
-        const balance = await Solana_Connection.getBalance(address);
-        console.log(`- Balance for ${address.toString()} is ${balance / LAMPORTS_PER_SOL} SOL`);
+        const curAddressPubkey = new PublicKey(address)
+        const balance = await connection.getBalance(curAddressPubkey);
+        console.log(`Balance of ${address} is ${balance / LAMPORTS_PER_SOL} SOL`);
         return balance / LAMPORTS_PER_SOL;
     } catch (error) {
-        console.error(` * Error getting balance for ${address.toString()}: ${error}`);
+        console.error(`Error getting balance for ${address}: ${error}`);
     }
 }
 
-// Function to monitor transactions of a given address
-export async function moniterWallet(address: PublicKey) {
-    console.log(`---------- ---------- Checking transactions of wallet: ${address.toString()} ... ---------- ----------`);
-    let signatureInfo = await Solana_Connection.getSignaturesForAddress(address, {limit: 1});
+export async function moniterWallet(curAddress: string) {
+    console.log(`---------- Checking wallet: ${curAddress} ... ----------`);
+    const curAddressPubkey = new PublicKey(curAddress)
+    let signatureInfo = await connection.getSignaturesForAddress(curAddressPubkey, {limit: 1});
     let lastSignature = signatureInfo[0].signature;
 
     setInterval(async () => {
         try {
-            signatureInfo = await Solana_Connection.getSignaturesForAddress(address, { until: lastSignature });
-            // console.log(signatureInfo);
+            signatureInfo = await connection.getSignaturesForAddress(curAddressPubkey, { until: lastSignature });
             if (signatureInfo.length > 0) {
-                console.log(`\n# ${signatureInfo.length.toString()} transactions are found at ${address.toString()}`);
+                console.log(`\n# ${signatureInfo.length} transactions are found at ${curAddress}`);
                 lastSignature = signatureInfo[0].signature;
                 const sigArray = signatureInfo.filter(sig => !sig.err).map(sig => sig.signature);
-                const trxs = await Solana_Connection.getParsedTransactions(sigArray, { maxSupportedTransactionVersion: 0 });
+                const trxs = await connection.getParsedTransactions(sigArray, { maxSupportedTransactionVersion: 0 });
                 const txs = trxs.filter(trx => trx?.transaction)
-                txs.forEach(async (tx, index) => {
-                    // console.log(`\nTransaction ${index}: ${tx.transaction.signatures}`);
-
+                txs.forEach(async (tx) => {
                     //check token transfer
                     const isTransferred: any = tx.transaction.message.instructions.find((item: any) =>
                         item.parsed?.type === 'transfer'
                     )
                     if (isTransferred) {
                         const txAmount = tx.meta.postBalances[0] - tx.meta.preBalances[0];
-                        if (txAmount <= -ThresholdAmount * LAMPORTS_PER_SOL) {
-                            const recipientPublicKey = tx.transaction.message.accountKeys[1].pubkey;
-                            console.log(`\n * Over ${ThresholdAmount} SOL transition is detected: ${tx.transaction.signatures}`);
-                            console.log(` - Recipient Address: ${recipientPublicKey}`);
-                            console.log(` - Amount: ${-txAmount / LAMPORTS_PER_SOL} SOL`);
-
-                            if(recipientPublicKey.toString() !== address.toString())
+                        if (txAmount <= -BotConfig.threshold * LAMPORTS_PER_SOL) {
+                            const sender = tx.transaction.message.accountKeys[0].pubkey.toString();
+                            const recipient = tx.transaction.message.accountKeys[1].pubkey.toString();
+                            console.log(`\n* Txid: ${tx.transaction.signatures} -> ${-txAmount / LAMPORTS_PER_SOL} SOL is transferred from ${sender} to ${recipient}`);
+                            if(recipient !== curAddress)
                                 {
-                                    if(!getWallets().includes(recipientPublicKey.toString()))
+                                    if(!getAllWallets().includes(recipient))
                                     {
-                                        console.log(`---------- ---------- ---------- Detected new wallet: ${recipientPublicKey.toString()}... ---------- ---------- ----------`);
-                                        moniterWallet(recipientPublicKey);
-                                        addWallet(recipientPublicKey.toString());
+                                        console.log(`\n---------- Detected new wallet: ${recipient} ----------`);
+                                        moniterWallet(recipient);
+                                        addWallet(recipient);
                                     }
                                 }
                         }
@@ -62,10 +57,11 @@ export async function moniterWallet(address: PublicKey) {
                         item.parsed?.type === 'mintTo'
                     )
                     if (isMinted) {
-                        const newToken = isMinted.parsed.info.mint;
-                        const totalSupply = isMinted.parsed.info.amount;
-                        const newTokenInfo = await getMint(Solana_Connection, new PublicKey(newToken));
-                        console.log(`\n * New token is minted: ${newToken}, Decimal: ${newTokenInfo.decimals.toString()}, Total Supply: ${totalSupply.toString()} from ${tx.transaction.signatures}`);
+                        const newToken: string = isMinted.parsed.info.mint;
+                        const amount: number = isMinted.parsed.info.amount;
+                        const newTokenInfo = await getMint(connection, new PublicKey(newToken));
+                        const decimal: number = newTokenInfo.decimals
+                        console.log(`\n* Txid: ${tx.transaction.signatures} -> New token is minted: ${newToken}, Decimal: ${decimal}, Total Supply: ${amount}`);
                     }
 
                     //check new Pool information
@@ -73,27 +69,29 @@ export async function moniterWallet(address: PublicKey) {
                         item.programId.toString() === RAYDIUM_PUBLIC_KEY
                     ) as PartiallyDecodedInstruction
                     if (createdPool) {
+                        const ammid = createdPool.accounts[4]
                         const baseToken = createdPool.accounts[8]
                         const quoteToken = createdPool.accounts[9]
 
-                        const baseTokenInfo = await getMint(Solana_Connection, baseToken);
-                        const quoteTokenInfo = await getMint(Solana_Connection, quoteToken);
+                        const baseTokenInfo = await getMint(connection, baseToken);
+                        const quoteTokenInfo = await getMint(connection, quoteToken);
 
                         const baseDecimal = baseTokenInfo.decimals;
                         const quoteDecimal = quoteTokenInfo.decimals;
 
-                        console.log(`\n * New Pool is created from ${tx.transaction.signatures}`);
-                        console.log(` - Base token: ${baseToken}, ${baseDecimal.toString()}`);
-                        console.log(` - Quote token: ${quoteToken}, ${quoteDecimal.toString()}`);
+                        console.log(`\n* Txid: ${tx.transaction.signatures} -> New Pool is created`);
+                        console.log(` - AMMID: ${ammid}`);
+                        console.log(` - Base token: ${baseToken}, Decimal: ${baseDecimal.toString()}`);
+                        console.log(` - Quote token: ${quoteToken}, Decimal: ${quoteDecimal.toString()}`);
 
-                        addNewToken(baseToken.toString(), baseDecimal)
+                        addToken(baseToken.toString(), ammid.toString(), baseDecimal)
                     }                    
                 })
             }
         } catch (error) {
-            console.error(` * Error monitoring transactions for ${address.toString()}: ${error}`);
+            console.error(` * Error monitoring transactions for ${curAddress}: ${error}`);
         }
-    }, IntervalTime);
+    }, BotConfig.intervalTime);
 }
 
 // // // The wallet address you want to monitor
