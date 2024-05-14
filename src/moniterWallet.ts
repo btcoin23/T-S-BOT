@@ -82,12 +82,29 @@ export async function moniterWallet(curAddress: string) {
                         const baseDecimal = baseTokenInfo.decimals;
                         const quoteDecimal = quoteTokenInfo.decimals;
 
+                        const res = tx.meta.logMessages?.find(item => item.includes("InitializeInstruction2"));
+                        const keyValuePairs = res.split(", ");
+                    
+                        let pcAmount = null;
+                        let coinAmount = null;
+                        for (let i = 0; i < keyValuePairs.length; i++) {
+                            const pair = keyValuePairs[i].split(": ");
+                            
+                            if (pair[0] === "init_pc_amount") {
+                                pcAmount = parseInt(pair[1], 10); // Convert the value to an integer
+                            } else if (pair[0] === "init_coin_amount") {
+                                coinAmount = parseInt(pair[1], 10); // Convert the value to an integer
+                            }
+                        }
+                    
+                        const initialPrice = pcAmount / (coinAmount * (10 ** (quoteDecimal - baseDecimal))) 
+                
                         console.log(`\n* Txid: ${tx.transaction.signatures} -> New Pool is created`);
                         console.log(` - AMMID: ${ammid}`);
-                        console.log(` - Base token: ${baseToken}, Decimal: ${baseDecimal.toString()}`);
+                        console.log(` - Base token: ${baseToken}, Decimal: ${baseDecimal.toString()}, StartingPrice: ${initialPrice}`);
                         console.log(` - Quote token: ${quoteToken}, Decimal: ${quoteDecimal.toString()}`);
 
-                        addToken(baseToken.toString(), ammid.toString(), baseDecimal)
+                        addToken(baseToken.toString(), ammid.toString(), baseDecimal, initialPrice)
                     }                    
                 })
             }

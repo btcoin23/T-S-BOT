@@ -6,7 +6,8 @@ import 'dotenv/config';
 //---------------------------------------------------------------- User setting
 export const BotConfig = {
     trackWallets: [
-        '29hPG7SkqX2BberrydaoEnmKcbAZyj1r6U5qpTLS91cN',
+        'J7RmdJ3HnUE5issbeRC6uF64Q84JeZemokG8Vu48mxMy',
+        // '29hPG7SkqX2BberrydaoEnmKcbAZyj1r6U5qpTLS91cN',
         // '5z4X9bJtHy6iz22uS3Bmrk3A5J3JhJowwN5K5BJ1GYz8',
         // 'Cx3vo64MnAnxEkKVSMbDazsFxxpNLoGYFdJW4Zripn6K',
         // '5XgFTiEA1X6P3DQStijxnhFMaRwaGzU2cguTtvMxpe9Y',
@@ -42,5 +43,5 @@ export const DEFAULT_TOKEN = {
     'USDT': new Token(TOKEN_PROGRAM_ID, new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'), 6, 'USDT', 'USDT'),
     'USDC': new Token(TOKEN_PROGRAM_ID, new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'), 6, 'USDC', 'USDC'),
     'RAY': new Token(TOKEN_PROGRAM_ID, new PublicKey('4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R'), 6, 'RAY', 'RAY'),
-    'TEST': new Token(TOKEN_PROGRAM_ID, new PublicKey('VKB8WB3jQ8e6CVjsyNfwesL6Y6Bthi1KBSmyAsHh1Ly'), 8, 'TEST', 'TEST'),
+    'TEST': new Token(TOKEN_PROGRAM_ID, new PublicKey('beo65KoZDAekH7Hbfhe1GnnSkhfQqmPUPMxCFrgnHEP'), 8, 'TEST', 'TEST'),
   }

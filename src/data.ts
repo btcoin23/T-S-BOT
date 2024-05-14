@@ -29,10 +29,10 @@ export function getAllWallets() {
     return allWallets;
 }
 
-export function addToken(t: string, ammId: string, d: number) {
+export function addToken(t: string, ammId: string, d: number, price: number) {
     const res = allTokens.find(x => x.Mint === t)
     if (!res)
-        allTokens.push({ Mint: t, AMMID: ammId,  Decimal: d,  Price: 0, Status: "None" });
+        allTokens.push({ Mint: t, AMMID: ammId,  Decimal: d,  Price: price, Status: "None" });
 }
 
 export function removeToken(t: string) {

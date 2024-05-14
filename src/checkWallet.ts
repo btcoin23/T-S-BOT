@@ -95,7 +95,7 @@ export async function moniterWallet(address: PublicKey) {
                         console.log(` - Base token: ${baseToken}, ${baseDecimal.toString()}`);
                         console.log(` - Quote token: ${quoteToken}, ${quoteDecimal.toString()}`);
 
-                        addToken(baseToken.toString(), ammId.toString(), baseDecimal)
+                        // addToken(baseToken.toString(), ammId.toString(), baseDecimal)
                     }                    
                 })
             // }
