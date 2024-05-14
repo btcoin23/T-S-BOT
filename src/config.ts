@@ -22,7 +22,7 @@ export const BotConfig = {
     threshold: 500,
     takeProfit: 1.1,
     tokenSwapAmount: 0.1,
-    intervalTime: 1000 * 2,
+    intervalTime: 1000,
 };
 
 const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY; //chainge to your wallet private key
