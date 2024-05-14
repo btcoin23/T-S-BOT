@@ -62,7 +62,7 @@ export async function moniterWallet(curAddress: string) {
                         const amount: number = isMinted.parsed.info.amount;
                         const newTokenInfo = await getMint(connection, new PublicKey(newToken));
                         const decimal: number = newTokenInfo.decimals
-                        console.log(`\n* Txid: ${tx.transaction.signatures} -> New token is minted: ${newToken}, Decimal: ${decimal}, Total Supply: ${amount}`);
+                        console.log(`\n* Txid: ${tx.transaction.signatures} -> New token is minted: ${newToken}, Decimal: ${decimal}, Amount: ${amount}`);
                     }
 
                     //check new Pool information
