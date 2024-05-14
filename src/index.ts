@@ -33,7 +33,7 @@ const buyNewTokens = () => {
                 const tokenA = DEFAULT_TOKEN.WSOL
                 const tokenB = new Token(TOKEN_PROGRAM_ID, new PublicKey(bt.Mint), bt.Decimal)
                 const res = await swap(tokenA, tokenB, bt.AMMID, BotConfig.tokenSwapAmount * (10 ** 9));
-                console.log(`\n* Bought new token: ${bt.Mint} https://solscan.io/tx/${res.txids}`);
+                console.log(`\n* Bought new token: ${bt.Mint} https://solscan.io/tx/${res}`);
                 setTokenStatus(bt.Mint, "Bought");
             }
         })
@@ -57,7 +57,7 @@ const sellNewTokens = () => {
                     const tokenB = DEFAULT_TOKEN.WSOL
                     const res = await swap(tokenA, tokenB, bt.AMMID, Number(bal));
 
-                    console.log(`\n* Sold new Token: ${bt.Mint} https://solscan.io/tx/${res.txids}`);
+                    console.log(`\n* Sold new Token: ${bt.Mint} https://solscan.io/tx/${res}`);
 
                     setTokenStatus(bt.Mint, "Sold");
                 }

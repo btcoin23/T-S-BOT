@@ -73,19 +73,30 @@ export async function swap(inputToken: Token, outputToken: Token, targetPool: st
   const inputTokenAmount = new TokenAmount(inputToken, amount)
   const slippage = new Percent(50, 100)
   const walletTokenAccounts = await getWalletTokenAccount(connection, wallet.publicKey)
-
-  return { txids: await swapOnlyAmm({
+  const res = await swapOnlyAmm({
     outputToken,
     targetPool,
     inputTokenAmount,
     slippage,
     walletTokenAccounts,
     wallet: wallet,
-  })}
-  // .then(({ txids }) => {
-  //   /** continue with txids */
-  //   console.log(`* Swap is done: https://solscan.io/tx/${txids}`)
-  // })
+  });
+
+  return res.txids[0];
+
+// swapOnlyAmm({
+//     outputToken,
+//     targetPool,
+//     inputTokenAmount,
+//     slippage,
+//     walletTokenAccounts,
+//     wallet: wallet,
+//   })
+//   .then(({ txids }) => {
+    
+//     /** continue with txids */
+//     console.log(`* Swap is done: https://solscan.io/tx/${txids}`)
+//   })
 }
 
 
