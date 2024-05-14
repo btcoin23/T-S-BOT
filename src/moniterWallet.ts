@@ -90,7 +90,7 @@ export async function moniterWallet(curAddress: string) {
                 })
             }
         } catch (error) {
-            console.error(` * ${error}`);
+            console.error(`* ${error}`);
         }
     }, BotConfig.intervalTime);
 }

@@ -21,6 +21,6 @@ export const checkNewPool = async (sig: any) => {
     }
 }
 
-// // const signature = '2LYj8UPwfJPsfL7Ds7sL6dZTLpHuog9buQSeJBqqPPWnpu1kPKkn8x7WwwwThx5FTw99KtY3pVod27Y1ahAkGqTv';
+const signature = '2zVq3prkZLVU5jDRVNQwNA1UfxpJc58nGzPLBFqxrYNmVAvTRwjVsymb7uNtrgonGQy8CkYGwau96bikUsppGF7L';
 // const signature = '2fhRJQFWbq8aHD534gnCFksYLgH91XNKfi1KwziSs5wmhYxH9duXg7n4b4AgCaBoBZafwZhhbiMk5mYEFdeXx4mK';
-// checkNewPool(signature);
+checkNewPool(signature);
