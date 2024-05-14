@@ -66,13 +66,16 @@ export async function moniterWallet(curAddress: string) {
                     }
 
                     //check new Pool information
-                    const createdPool = tx.transaction.message.instructions.find((item: any) =>
+                    console.log(tx.meta.logMessages?.find((item: string) =>item.includes('Create')))
+                    const interactRaydium = tx.transaction.message.instructions.find((item: any) =>
                         item.programId.toString() === RAYDIUM_PUBLIC_KEY
                     ) as PartiallyDecodedInstruction
-                    if (createdPool) {
-                        const ammid = createdPool.accounts[4]
-                        const baseToken = createdPool.accounts[8]
-                        const quoteToken = createdPool.accounts[9]
+                    const createdPool = tx.meta.logMessages?.find((item: string) =>item.includes('Create'))
+                    if (interactRaydium && createdPool) {
+
+                        const ammid = interactRaydium.accounts[4]
+                        const baseToken = interactRaydium.accounts[8]
+                        const quoteToken = interactRaydium.accounts[9]
 
                         const baseTokenInfo = await getMint(connection, baseToken);
                         const quoteTokenInfo = await getMint(connection, quoteToken);
