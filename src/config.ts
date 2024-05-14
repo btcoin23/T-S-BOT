@@ -7,9 +7,9 @@ import 'dotenv/config';
 export const BotConfig = {
     trackWallets: [
         // '5bWogTDsnzuDQZ9pRdvk74z1Qj3LRGFgPy9ZbDtiYBxS',
-        // 'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
+        'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
         //'N22uCb2j9GriychZJzh9t5idaddLdkHhANNH27GUPYC',
-        'J9TfJHNu8PY78fP5s7fw29y8HE8fnRFUQKQ5Sm48ZqYi',
+        // 'J9TfJHNu8PY78fP5s7fw29y8HE8fnRFUQKQ5Sm48ZqYi',
         // 'FTtgnLCyg6UuPGvxktbaRcqcryDQyF3NnE5smgSHkNzp',
         // '7Mmzz7AAKJYfsMAXaoJSmBnFWVyXUwU7p3nK26Yz2gHY',
         //'CU7aczodxt3y6sDYJNT1VRxY54PcbFkiNyRfxuRKjsPA',
