@@ -7,7 +7,7 @@ import { swap } from "./swapAmm";
 import { BotConfig, connection, wallet, DEFAULT_TOKEN } from "./config";
 import { moniterWallet } from "./moniterWallet";
 import { getPrice } from "./getPrice";
-import { initWallets, addToken, getAllWallets, getAllTokens, removeToken, setTokenStatus } from "./data";
+import { initWallets, addToken, getAllWallets, getAllTokens, removeToken, setTokenStatus, updateTokenPrice } from "./data";
 import { getWalletTokenAccount } from './util';
 
 const runBot = async() => {
@@ -32,10 +32,10 @@ const buyNewTokens = () => {
 
                 const tokenA = DEFAULT_TOKEN.WSOL
                 const tokenB = new Token(TOKEN_PROGRAM_ID, new PublicKey(bt.Mint), bt.Decimal)
-                await swap(tokenA, tokenB, bt.AMMID, BotConfig.tokenSwapAmount * (10 ** 9));
-
-                console.log(`\n* Bought new token: ${bt.Mint}`);
+                const txid = await swap(tokenA, tokenB, bt.AMMID, BotConfig.tokenSwapAmount * (10 ** 9));
+                console.log(`\n* Bought new token: ${bt.Mint} https://solscan.io/tx/${txid}`);
                 setTokenStatus(bt.Mint, "Bought");
+                await updateTokenPrice(bt.Mint)
             }
         })
     }, BotConfig.intervalTime)
@@ -56,9 +56,9 @@ const sellNewTokens = () => {
                     
                     const tokenA = new Token(TOKEN_PROGRAM_ID, new PublicKey(bt.Mint), bt.Decimal)
                     const tokenB = DEFAULT_TOKEN.WSOL
-                    await swap(tokenA, tokenB, bt.AMMID, Number(bal));
+                    const txid = await swap(tokenA, tokenB, bt.AMMID, Number(bal));
 
-                    console.log(`\n* Sold new Token: ${bt.Mint}`);
+                    console.log(`\n* Sold new Token: ${bt.Mint} https://solscan.io/tx/${txid}`);
 
                     setTokenStatus(bt.Mint, "Sold");
                 }
