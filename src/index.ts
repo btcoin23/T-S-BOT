@@ -33,8 +33,12 @@ const buyNewTokens = () => {
                 const tokenA = DEFAULT_TOKEN.WSOL
                 const tokenB = new Token(TOKEN_PROGRAM_ID, new PublicKey(bt.Mint), bt.Decimal)
                 const res = await swap(tokenA, tokenB, bt.AMMID, BotConfig.tokenSwapAmount * (10 ** 9));
-                console.log(`\n* Bought new token: ${bt.Mint} https://solscan.io/tx/${res}`);
-                setTokenStatus(bt.Mint, "Bought");
+                const walletTokenInfs = await getWalletTokenAccount(connection, wallet.publicKey);
+                const acc = walletTokenInfs.find(account => account.accountInfo.mint.toString() === bt.Mint);
+                if(acc){
+                    console.log(`\n* Bought new token: ${bt.Mint} https://solscan.io/tx/${res}`);
+                    setTokenStatus(bt.Mint, "Bought");
+                }
             }
         })
     }, BotConfig.intervalTime)
@@ -50,15 +54,13 @@ const sellNewTokens = () => {
                     setTokenStatus(bt.Mint, "Wait")
                     const walletTokenInfs = await getWalletTokenAccount(connection, wallet.publicKey);
                     const acc = walletTokenInfs.find(account => account.accountInfo.mint.toString() === bt.Mint);
-                    const bal = acc.accountInfo.amount
-                    // const amount = new Decimal(Number(bal)).div(10 ** bt.Decimal);
-                    
-                    const tokenA = new Token(TOKEN_PROGRAM_ID, new PublicKey(bt.Mint), bt.Decimal)
-                    const tokenB = DEFAULT_TOKEN.WSOL
-                    const res = await swap(tokenA, tokenB, bt.AMMID, Number(bal));
-
-                    console.log(`\n* Sold new Token: ${bt.Mint} https://solscan.io/tx/${res}`);
-
+                    if(acc){
+                        const bal = acc.accountInfo.amount
+                        const tokenA = new Token(TOKEN_PROGRAM_ID, new PublicKey(bt.Mint), bt.Decimal)
+                        const tokenB = DEFAULT_TOKEN.WSOL
+                        const res = await swap(tokenA, tokenB, bt.AMMID, Number(bal));
+                        console.log(`\n* Sold new Token: ${bt.Mint} https://solscan.io/tx/${res}`);
+                    }
                     setTokenStatus(bt.Mint, "Sold");
                 }
             }
