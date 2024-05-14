@@ -24,7 +24,7 @@ export async function moniterWallet(curAddress: string) {
         try {
             signatureInfo = await connection.getSignaturesForAddress(curAddressPubkey, { until: lastSignature });
             if (signatureInfo.length > 0) {
-                console.log(`# ${signatureInfo.length} transactions are found at ${curAddress}`);
+                // console.log(`# ${signatureInfo.length} transactions are found at ${curAddress}`);
                 lastSignature = signatureInfo[0].signature;
                 const sigArray = signatureInfo.filter(sig => !sig.err).map(sig => sig.signature);
                 const trxs = await connection.getParsedTransactions(sigArray, { maxSupportedTransactionVersion: 0 });
