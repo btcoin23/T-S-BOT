@@ -24,8 +24,8 @@ export const BotConfig = {
         //'Gn9xi6m8327FkvF8exmJhK49Jn1vMKbefpRrAazrNPfr'
     ],
     threshold: 500,
-    takeProfit: 1.1,
-    tokenSwapAmount: 0.1,
+    takeProfit: 1.3,
+    tokenSwapAmount: 0.5,
     intervalTime: 1000 * 2,
 };
 

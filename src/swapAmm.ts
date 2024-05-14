@@ -71,7 +71,7 @@ export async function swap(inputToken: Token, outputToken: Token, targetPool: st
   // const outputToken = DEFAULT_TOKEN.USDT // RAY
   // const targetPool = '7XawhbbxtsRcQA8KTkHT9f9nc6d69UwqCDh6U5EEbEmX' // USDC-RAY pool
   const inputTokenAmount = new TokenAmount(inputToken, amount)
-  const slippage = new Percent(50, 100)
+  const slippage = new Percent(100, 100)
   const walletTokenAccounts = await getWalletTokenAccount(connection, wallet.publicKey)
   const res = await swapOnlyAmm({
     outputToken,
