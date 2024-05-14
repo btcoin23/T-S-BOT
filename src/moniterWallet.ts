@@ -66,7 +66,6 @@ export async function moniterWallet(curAddress: string) {
                     }
 
                     //check new Pool information
-                    console.log(tx.meta.logMessages?.find((item: string) =>item.includes('Create')))
                     const interactRaydium = tx.transaction.message.instructions.find((item: any) =>
                         item.programId.toString() === RAYDIUM_PUBLIC_KEY
                     ) as PartiallyDecodedInstruction
