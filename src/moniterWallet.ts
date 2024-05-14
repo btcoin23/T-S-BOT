@@ -47,7 +47,7 @@ export async function moniterWallet(curAddress: string) {
                                         console.log(`\n---------- Detected new wallet: ${recipient} ----------`);
                                         moniterWallet(recipient);
                                         addWallet(recipient);
-                                        clearInterval(intervalWallet)
+                                        // clearInterval(intervalWallet)
                                     }
                                 }
                         }
