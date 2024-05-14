@@ -45,6 +45,7 @@ export function setTokenStatus(t: string, s: string) {
 
 export async function updateTokenPrice(t: string) {
     const price = await getPrice(t)
+    console.log(`Initial price: ${price}`)
     allTokens.find(x => x.Mint === t).Price = price;
 }
 
