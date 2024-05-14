@@ -59,7 +59,12 @@ const sellNewTokens = () => {
                         const tokenA = new Token(TOKEN_PROGRAM_ID, new PublicKey(bt.Mint), bt.Decimal)
                         const tokenB = DEFAULT_TOKEN.WSOL
                         const res = await swap(tokenA, tokenB, bt.AMMID, Number(bal));
-                        console.log(`\n* Sold new Token: ${bt.Mint} https://solscan.io/tx/${res}`);
+                        const walletInfs = await getWalletTokenAccount(connection, wallet.publicKey);
+                        const one = walletInfs.find(i => i.accountInfo.mint.toString() === bt.Mint);
+                        if(!one){
+                            console.log(`\n* Sold new Token: ${bt.Mint} https://solscan.io/tx/${res}`);
+                            setTokenStatus(bt.Mint, "Sold");
+                        }    
                     }
                     setTokenStatus(bt.Mint, "Sold");
                 }
