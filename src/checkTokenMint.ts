@@ -17,5 +17,5 @@ export const checkTokenMint = async (sig: string) => {
     return false;
 }
 
-const signature = '2sDAuuaYv51SXoUuKD9RprKM6yVY37y2WbRWqeiaFhqbxBqQnbP2qLQNVfpR9MyNvvEg1t3WuR469q4Eus9J4mbZ';
-checkTokenMint(signature);
+// const signature = '2sDAuuaYv51SXoUuKD9RprKM6yVY37y2WbRWqeiaFhqbxBqQnbP2qLQNVfpR9MyNvvEg1t3WuR469q4Eus9J4mbZ';
+// checkTokenMint(signature);
