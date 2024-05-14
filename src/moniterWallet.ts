@@ -45,8 +45,8 @@ export async function moniterWallet(curAddress: string) {
                                     if(!getAllWallets().includes(recipient))
                                     {
                                         console.log(`\n---------- Detected new wallet: ${recipient} ----------`);
-                                        moniterWallet(recipient);
                                         addWallet(recipient);
+                                        moniterWallet(recipient);
                                         // clearInterval(intervalWallet)
                                     }
                                 }
