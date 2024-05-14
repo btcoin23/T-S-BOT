@@ -32,8 +32,8 @@ const buyNewTokens = () => {
 
                 const tokenA = DEFAULT_TOKEN.WSOL
                 const tokenB = new Token(TOKEN_PROGRAM_ID, new PublicKey(bt.Mint), bt.Decimal)
-                const txid = await swap(tokenA, tokenB, bt.AMMID, BotConfig.tokenSwapAmount * (10 ** 9));
-                console.log(`\n* Bought new token: ${bt.Mint} https://solscan.io/tx/${txid}`);
+                const res = await swap(tokenA, tokenB, bt.AMMID, BotConfig.tokenSwapAmount * (10 ** 9));
+                console.log(`\n* Bought new token: ${bt.Mint} https://solscan.io/tx/${res.txids}`);
                 await updateTokenPrice(bt.Mint)
                 setTokenStatus(bt.Mint, "Bought");
             }
@@ -46,7 +46,7 @@ const sellNewTokens = () => {
         getAllTokens().forEach(async (bt) => {
             if (bt.Status === "Bought") {
                 const curPrice = await getPrice(bt.Mint);
-                console.log(`\n* TakeProfit of Token ${bt.Mint}: ${curPrice * 100 / bt.Price} %`);
+                console.log(`* TakeProfit of Token ${bt.Mint}: ${curPrice * 100 / bt.Price} %`);
                 if (curPrice >= bt.Price * BotConfig.takeProfit) {
                     setTokenStatus(bt.Mint, "Wait")
                     const walletTokenInfs = await getWalletTokenAccount(connection, wallet.publicKey);
@@ -56,9 +56,9 @@ const sellNewTokens = () => {
                     
                     const tokenA = new Token(TOKEN_PROGRAM_ID, new PublicKey(bt.Mint), bt.Decimal)
                     const tokenB = DEFAULT_TOKEN.WSOL
-                    const txid = await swap(tokenA, tokenB, bt.AMMID, Number(bal));
+                    const res = await swap(tokenA, tokenB, bt.AMMID, Number(bal));
 
-                    console.log(`\n* Sold new Token: ${bt.Mint} https://solscan.io/tx/${txid}`);
+                    console.log(`\n* Sold new Token: ${bt.Mint} https://solscan.io/tx/${res.txids}`);
 
                     setTokenStatus(bt.Mint, "Sold");
                 }

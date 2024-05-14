@@ -88,4 +88,5 @@ export async function swap(inputToken: Token, outputToken: Token, targetPool: st
   // })
 }
 
-// howToUse()
+
+// swap(DEFAULT_TOKEN.TEST, DEFAULT_TOKEN.WSOL, 'Fbn9AtfNu1Pc5GDpw2kP1C4Luib8oYQLREEqjKwV8xyw', 1311882244800)

@@ -10,8 +10,8 @@ export const getPrice = async (tokenMint: string) => {
         return Number(price);
     }
     catch (e) {
-        getPrice(tokenMint);
+        await getPrice(tokenMint);
     }
 }
-// const token = '14pj2MnN6mepGG5vmLQoTGAGxndGkigd1w8qTtA6fDkQ'
+// const token = 'VKB8WB3jQ8e6CVjsyNfwesL6Y6Bthi1KBSmyAsHh1Ly'
 // getPrice(token);

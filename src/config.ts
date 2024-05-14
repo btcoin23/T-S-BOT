@@ -42,4 +42,5 @@ export const DEFAULT_TOKEN = {
     'USDT': new Token(TOKEN_PROGRAM_ID, new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'), 6, 'USDT', 'USDT'),
     'USDC': new Token(TOKEN_PROGRAM_ID, new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'), 6, 'USDC', 'USDC'),
     'RAY': new Token(TOKEN_PROGRAM_ID, new PublicKey('4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R'), 6, 'RAY', 'RAY'),
+    'TEST': new Token(TOKEN_PROGRAM_ID, new PublicKey('VKB8WB3jQ8e6CVjsyNfwesL6Y6Bthi1KBSmyAsHh1Ly'), 8, 'TEST', 'TEST'),
   }
