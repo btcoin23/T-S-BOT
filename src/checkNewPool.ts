@@ -3,24 +3,28 @@ import { RAYDIUM_PUBLIC_KEY, connection } from './config';
 import { getMint } from '@solana/spl-token';
 export const checkNewPool = async (sig: any) => {
     const tx = await connection.getParsedTransaction(sig, { maxSupportedTransactionVersion: 0 });
-    const res = tx.transaction.message.instructions.find((item: any) =>
+    const createdPool = tx.transaction.message.instructions.find((item: any) =>
         item.programId.toString() === RAYDIUM_PUBLIC_KEY
     ) as PartiallyDecodedInstruction
-
-    if (res) {
-        const baseToken = res.accounts[8]
-        const quoteToken = res.accounts[9]
+    if (createdPool) {
+        const ammid = createdPool.accounts[4]
+        const baseToken = createdPool.accounts[8]
+        const quoteToken = createdPool.accounts[9]
 
         const baseTokenInfo = await getMint(connection, baseToken);
         const quoteTokenInfo = await getMint(connection, quoteToken);
 
-        console.log(' - New Pool is founded');
-        console.log(` - Base token: ${baseToken}, ${baseTokenInfo.decimals.toString()}`);
-        console.log(` - Quote token: ${quoteToken}, ${quoteTokenInfo.decimals.toString()}`);
-        return { baseToken, quoteToken }
-    }
+        const baseDecimal = baseTokenInfo.decimals;
+        const quoteDecimal = quoteTokenInfo.decimals;
+
+        console.log(`\n* Txid: ${tx.transaction.signatures} -> New Pool is created`);
+        console.log(` - AMMID: ${ammid}`);
+        console.log(` - Base token: ${baseToken}, Decimal: ${baseDecimal.toString()}`);
+        console.log(` - Quote token: ${quoteToken}, Decimal: ${quoteDecimal.toString()}`);
+
+    }                    
 }
 
-const signature = '2zVq3prkZLVU5jDRVNQwNA1UfxpJc58nGzPLBFqxrYNmVAvTRwjVsymb7uNtrgonGQy8CkYGwau96bikUsppGF7L';
+const signature = '4GQVoKwZke1ohVb6tV6pXL7uAYX1DpWPu8YZhTjVtg4KDXsEbFVpBtSpQXHxwj9csniApUjeYLuvAvn4Ykgc3pUk';
 // const signature = '2fhRJQFWbq8aHD534gnCFksYLgH91XNKfi1KwziSs5wmhYxH9duXg7n4b4AgCaBoBZafwZhhbiMk5mYEFdeXx4mK';
 checkNewPool(signature);
