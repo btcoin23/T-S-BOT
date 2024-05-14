@@ -34,8 +34,8 @@ const buyNewTokens = () => {
                 const tokenB = new Token(TOKEN_PROGRAM_ID, new PublicKey(bt.Mint), bt.Decimal)
                 const txid = await swap(tokenA, tokenB, bt.AMMID, BotConfig.tokenSwapAmount * (10 ** 9));
                 console.log(`\n* Bought new token: ${bt.Mint} https://solscan.io/tx/${txid}`);
-                setTokenStatus(bt.Mint, "Bought");
                 await updateTokenPrice(bt.Mint)
+                setTokenStatus(bt.Mint, "Bought");
             }
         })
     }, BotConfig.intervalTime)
