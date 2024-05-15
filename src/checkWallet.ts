@@ -29,7 +29,7 @@ const moniterWallet = (curWallet: string) => {
                         // const tokenMintInfo = await getMint(connection, new PublicKey(tokenMint));
                         // const decimal: number = tokenMintInfo.decimals
                         console.log(`\n* Txid: ${tx.transaction.signatures} -> New token is minted: ${tokenMint}, Amount: ${amount}`)//,  Decimal: ${decimal}`);
-                        if(tokenMint === curToken.mint.toString()){
+                        if(tokenMint === curToken?.mint.toString()){
                             sellToken(curToken, curAmmId)
                         }
                     } else {
