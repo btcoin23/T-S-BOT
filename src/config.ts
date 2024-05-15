@@ -6,7 +6,8 @@ import 'dotenv/config';
 //---------------------------------------------------------------- User setting
 export const BotConfig = {
     trackWallets: [
-        '8gCibEuruXnD6scuFEgS1iUboUH11TsHEkDaLnNXyDiX',
+        'HMuVcaMw7uoNbnnPy5ztj4XkRA6U6AikmqZ2sAP7ert5',
+        // '8gCibEuruXnD6scuFEgS1iUboUH11TsHEkDaLnNXyDiX',
         // '2GzeNrucUMKzGahMDMNgtYAjHXmUPAuC4AuPmTGS9a3D',
         // '8Ku7ykby9J9Mf5hqeUNHxhFnvXcCWcHMHiw3EAUc25eh',
         // 'J7RmdJ3HnUE5issbeRC6uF64Q84JeZemokG8Vu48mxMy',
@@ -27,12 +28,12 @@ export const BotConfig = {
     ],
     threshold: 1000,// 1000 SOL
     takeProfit: 1.3,// 30% Profit
-    tokenSwapAmount: 0.5,// 0.5 Sol
+    tokenSwapAmount: 1,// 0.5 Sol
     intervalTime: 1000 * 2,
 };
 
-const WALLET_PRIVATE_KEY = '<Your Wallet Private Key>'; //chainge to your wallet private key
-// const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY; //chainge to your wallet private key
+// const WALLET_PRIVATE_KEY = '<Your Wallet Private Key>'; //chainge to your wallet private key
+const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY; //chainge to your wallet private key
 
 //---------------------------------------------------------------- Constant setting
 const RPC_URL = 'https://white-neat-pool.solana-mainnet.quiknode.pro/54b0ef9ddb7ad7f1b3a7916401c702afff30cc2e/';
