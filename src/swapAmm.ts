@@ -84,19 +84,19 @@ export async function swap(inputToken: Token, outputToken: Token, targetPool: st
 
   return res.txids[0];
 
-// swapOnlyAmm({
-//     outputToken,
-//     targetPool,
-//     inputTokenAmount,
-//     slippage,
-//     walletTokenAccounts,
-//     wallet: wallet,
-//   })
-//   .then(({ txids }) => {
-    
-//     /** continue with txids */
-//     console.log(`* Swap is done: https://solscan.io/tx/${txids}`)
-//   })
+  // swapOnlyAmm({
+  //     outputToken,
+  //     targetPool,
+  //     inputTokenAmount,
+  //     slippage,
+  //     walletTokenAccounts,
+  //     wallet: wallet,
+  //   })
+  //   .then(({ txids }) => {
+
+  //     /** continue with txids */
+  //     console.log(`* Swap is done: https://solscan.io/tx/${txids}`)
+  //   })
 }
 
 

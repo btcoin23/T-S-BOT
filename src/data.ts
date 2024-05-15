@@ -22,7 +22,7 @@ export function addWallet(w: string) {
 }
 
 export function removeWallet(w: string) {
-    allWallets = allWallets.filter(x => x!== w);
+    allWallets = allWallets.filter(x => x !== w);
 }
 
 export function getAllWallets() {
@@ -32,7 +32,7 @@ export function getAllWallets() {
 export function addToken(t: string, ammId: string, d: number, price: number) {
     const res = allTokens.find(x => x.Mint === t)
     if (!res)
-        allTokens.push({ Mint: t, AMMID: ammId,  Decimal: d,  Price: price, Status: "None" });
+        allTokens.push({ Mint: t, AMMID: ammId, Decimal: d, Price: price, Status: "None" });
 }
 
 export function removeToken(t: string) {

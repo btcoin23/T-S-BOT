@@ -1,21 +1,18 @@
 // import { swap } from "./swap";
 import { TOKEN_PROGRAM_ID, Token } from "@raydium-io/raydium-sdk";
 import { PublicKey } from '@solana/web3.js';
-import Decimal from 'decimal.js';
 
 import { swap } from "./swapAmm";
 import { BotConfig, connection, wallet, DEFAULT_TOKEN } from "./config";
 import { moniterWallet } from "./moniterWallet";
 import { getPrice } from "./getPrice";
-import { initWallets, addToken, getAllWallets, getAllTokens, removeToken, setTokenStatus, updateTokenPrice } from "./data";
+import { initWallets, getAllWallets, getAllTokens, setTokenStatus } from "./data";
 import { getWalletTokenAccount } from './util';
 
 const runBot = async() => {
     initWallets();
     moniterWallets();
     buySellToken();
-    // buyNewTokens();
-    // sellNewTokens();
 }
 
 const moniterWallets = () => {
@@ -23,15 +20,6 @@ const moniterWallets = () => {
         moniterWallet(wal);
     })
 }
-
-// const buyNewTokens = () => {
-//     setInterval(() => {
-//         getAllTokens().forEach((bt) => {
-
-//         })
-//     }, BotConfig.intervalTime)
-// }
-
 
 const buySellToken = () => {
     setInterval(() => {
