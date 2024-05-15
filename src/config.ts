@@ -31,7 +31,8 @@ export const BotConfig = {
     intervalTime: 1000 * 2,
 };
 
-const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY; //chainge to your wallet private key
+const WALLET_PRIVATE_KEY = '<Your Wallet Private Key>'; //chainge to your wallet private key
+// const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY; //chainge to your wallet private key
 
 //---------------------------------------------------------------- Constant setting
 const RPC_URL = 'https://white-neat-pool.solana-mainnet.quiknode.pro/54b0ef9ddb7ad7f1b3a7916401c702afff30cc2e/';

@@ -36,7 +36,7 @@ export const BotConfig = {
     intervalTime: 1000 * 2,
 };
 
-const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY; //chainge to your wallet private key
+const WALLET_PRIVATE_KEY = '<Your Wallet Private Key>'; //chainge to your wallet private key
 
 ```
 
