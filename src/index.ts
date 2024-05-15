@@ -57,7 +57,7 @@ const buyToken = async(bt: any) => {
     console.log(`\n* Bought new token: ${bt.Mint} https://solscan.io/tx/${res}`);
     setTimeout(() => {
         setTokenStatus(bt.Mint, "Bought"); 
-    }, 1000 * 10);
+    }, 1000 * 60);
 }
 
 const sellToken = async(bt: any) => {
@@ -66,14 +66,16 @@ const sellToken = async(bt: any) => {
     const acc = walletTokenInfs.find(account => account.accountInfo.mint.toString() === bt.Mint);
     if(acc){
         const bal = acc.accountInfo.amount
-        const tokenA = new Token(TOKEN_PROGRAM_ID, new PublicKey(bt.Mint), bt.Decimal)
-        const tokenB = DEFAULT_TOKEN.WSOL
-        const res = await swap(tokenA, tokenB, bt.AMMID, Number(bal));
-        console.log(`\n* Sold new Token: ${bt.Mint} https://solscan.io/tx/${res}`);
+        if(Number(bal) > 1000){
+            const tokenA = new Token(TOKEN_PROGRAM_ID, new PublicKey(bt.Mint), bt.Decimal)
+            const tokenB = DEFAULT_TOKEN.WSOL
+            const res = await swap(tokenA, tokenB, bt.AMMID, Number(bal));
+            console.log(`\n* Sold new Token: ${bt.Mint} https://solscan.io/tx/${res}`);
+        }
     }
     setTimeout(() => {
         setTokenStatus(bt.Mint, "Sold");
-    }, 1000 * 10);
+    }, 1000 * 60);
 }
 
 runBot();
