@@ -5,8 +5,9 @@ import 'dotenv/config';
 
 //---------------------------------------------------------------- User setting
 export const BotConfig = {
-    trackWallets: [
-        '5GiJwg5QrLMjZ8wHLr6o98ck5qU92b4pAc7ZrcGpkdM4',
+    trackWallet: '5GiJwg5QrLMjZ8wHLr6o98ck5qU92b4pAc7ZrcGpkdM4',
+    // [
+        // '5GiJwg5QrLMjZ8wHLr6o98ck5qU92b4pAc7ZrcGpkdM4',
         // '8gCibEuruXnD6scuFEgS1iUboUH11TsHEkDaLnNXyDiX',
         // '2GzeNrucUMKzGahMDMNgtYAjHXmUPAuC4AuPmTGS9a3D',
         // '8Ku7ykby9J9Mf5hqeUNHxhFnvXcCWcHMHiw3EAUc25eh',
@@ -25,7 +26,7 @@ export const BotConfig = {
         //'A42h43yxnVGu1MgS97b1iSHK2fQP1VCpC9LEQdftgCN8',
         //'Gn9xi6m8327FkvF8exmJhK49Jn1vMKbefpRrAazrNPfr'
         // 'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
-    ],
+    // ],
     threshold: 1000,// 1000 SOL
     takeProfit: 1.9,// 30% Profit
     tokenSwapAmount: 0.01,// 0.5 Sol
@@ -37,7 +38,8 @@ const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY; //chainge to your wal
 
 //---------------------------------------------------------------- Constant setting
 const RPC_URL = 'https://white-neat-pool.solana-mainnet.quiknode.pro/cfe67fec23b12040';
-export const connection = new Connection(RPC_URL);
+const WSS_URL = 'wss://white-neat-pool.solana-mainnet.quiknode.pro/cfe67fec23b12040';
+export const connection = new Connection(RPC_URL, {wsEndpoint: WSS_URL});
 export const makeTxVersion = TxVersion.V0; // LEGACY
 export const addLookupTableInfo = LOOKUP_TABLE_CACHE
 export const RAYDIUM_PUBLIC_KEY = "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8";

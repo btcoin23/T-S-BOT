@@ -1,4 +1,3 @@
-import { BotConfig } from "./config";
 import { getPrice } from "./getPrice";
 
 type NewTokenInf = {
@@ -11,10 +10,6 @@ type NewTokenInf = {
 
 let allWallets: string[] = [];
 let allTokens: NewTokenInf[] = [];
-
-export const initWallets = () => {
-    BotConfig.trackWallets.forEach(w => allWallets.push(w));
-}
 
 export function addWallet(w: string) {
     if (!allWallets.includes(w))
@@ -50,7 +45,11 @@ export async function updateTokenPrice(t: string) {
 }
 
 export function updatedTokenStatus2sell(t: string) {
-    allTokens.find(x => (x.Mint === t && x.Status ==="Bought")).Status = "Have2sell";
+    allTokens.forEach(token => {
+        if (token.Mint === t && token.Status === "Bought") {
+            token.Status = "Have2sell";
+        }
+    })
 }
 
 export function getAllTokens() {

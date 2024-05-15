@@ -5,11 +5,11 @@ import { swap } from "./swapAmm";
 import { BotConfig, connection, wallet, DEFAULT_TOKEN } from "./config";
 import { moniterWallet } from "./moniterWallet";
 import { getPrice } from "./getPrice";
-import { initWallets, getAllWallets, getAllTokens, setTokenStatus } from "./data";
+import { addWallet, getAllWallets, getAllTokens, setTokenStatus } from "./data";
 import { getWalletTokenAccount } from './util';
 
 const runBot = async() => {
-    initWallets();
+    addWallet(BotConfig.trackWallet);
     moniterWallets();
     buySellToken();
 }
