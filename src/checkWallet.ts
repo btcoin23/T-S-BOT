@@ -6,6 +6,7 @@ import { connection, wallet, BotConfig, RAYDIUM_PUBLIC_KEY, DEFAULT_TOKEN } from
 import { getWalletTokenAccount } from './util';
 
 const moniterWallet = (curWallet: string) => {
+    console.log(`---------- Checking wallet: ${curWallet} ... ----------`);
     const WALLET_TRACK = new PublicKey(curWallet)
     let initialPrice: number;
     let curAmmId: string;
