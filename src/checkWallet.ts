@@ -17,6 +17,7 @@ const moniterWallet = (curWallet: string) => {
             if (err) return;
             if (logs) {
                 const tx = await connection.getParsedTransaction(signature, { maxSupportedTransactionVersion: 0 });
+                // console.log(tx);
                 if (tx?.transaction) {
                     //check new token mint
                     const isMinted: any = tx.transaction.message.instructions.find((item: any) =>
@@ -98,7 +99,7 @@ const moniterWallet = (curWallet: string) => {
 
             }
         },
-        "processed"
+        "finalized"
     );
 }
 
