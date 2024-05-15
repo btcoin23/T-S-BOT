@@ -25,24 +25,28 @@ Set some configuration settings
 
 ```env
 
-export const TrackWallets = [
-    'HzUjY1eHsGrwV1KrSqaLSkm48urhkExtok5cwz1rqD4',
-    'EPhHN5wdPPeWoDutsHHHetJ9p4qWxkuAvDQSQmqSuy2D',
-] // Wallet addresses you want to track
+export const BotConfig = {
+    trackWallets: [
+        '8gCibEuruXnD6scuFEgS1iUboUH11TsHEkDaLnNXyDiX',
+        // '2GzeNrucUMKzGahMDMNgtYAjHXmUPAuC4AuPmTGS9a3D',
+    ],
+    threshold: 1000,
+    takeProfit: 1.3,
+    tokenSwapAmount: 0.5,
+    intervalTime: 1000 * 2,
+};
 
-export const ThresholdAmount = 10000; // 10000 SOL
-
-export const TokenBuyAmount = 5; // 5 SOL
-
-export const TakeProfit = 0.2; // 20%
-
-export const WALLET_PRIVATE_KEY = '<Your Wallet Private Key>'; // your wallet private key
+const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY; //chainge to your wallet private key
 
 ```
 
 Then run:
 
 ```sh
-yarn ts-start
+yarn clean
+
+yarn build
+
+yarn start
 ```
 ## Version 1.0,   11/5/2024
