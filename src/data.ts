@@ -50,7 +50,7 @@ export async function updateTokenPrice(t: string) {
 }
 
 export function updatedTokenStatus2sell(t: string) {
-    allTokens.find(x => x.Mint === t && x.Status ==="Bought").Status = "Have2sell";
+    allTokens.find(x => (x.Mint === t && x.Status ==="Bought")).Status = "Have2sell";
 }
 
 export function getAllTokens() {
