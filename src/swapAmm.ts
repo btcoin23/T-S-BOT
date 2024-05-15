@@ -1,6 +1,7 @@
 import assert from 'assert';
 
 import {
+  BigNumberish,
   jsonInfo2PoolKeys,
   Liquidity,
   LiquidityPoolKeys,
@@ -100,4 +101,6 @@ export async function swap(inputToken: Token, outputToken: Token, targetPool: st
 }
 
 
-// swap(DEFAULT_TOKEN.TEST, DEFAULT_TOKEN.WSOL, 'FirmrFh1ggWkRZqz1eghYAavRxBXitwwtvZMMASUfYw4', 6440190473486)
+
+// const amount: BigNumberish = new BN(15601927538 * (10 ** 8))
+// swap(DEFAULT_TOKEN.TEST, DEFAULT_TOKEN.WSOL, '63tktcWCNQChSG5gzqkjnoeYmJuKRxuPMvDWsaJS9932', amount)
