@@ -10,5 +10,5 @@ export const getPrice = async (tokenMint: string) => {
         await getPrice(tokenMint);
     }
 }
-// const token = 'Wp5w6KmJHdBpLqzJXfUqV3ddPxt1XLSTv3rimcPi1Lz'
+// const token = 'S1XDJzrr2F5YkfCWeE8i52aySgE8XbyAHn3V5435rKz'
 // getPrice(token);

@@ -6,7 +6,7 @@ import 'dotenv/config';
 //---------------------------------------------------------------- User setting
 export const BotConfig = {
     trackWallets: [
-        'HMuVcaMw7uoNbnnPy5ztj4XkRA6U6AikmqZ2sAP7ert5',
+        '3sW3VBb5Eo92YsVCkm8ePTvAF7Q7gNhaEz4TxjJ3XREW',
         // '8gCibEuruXnD6scuFEgS1iUboUH11TsHEkDaLnNXyDiX',
         // '2GzeNrucUMKzGahMDMNgtYAjHXmUPAuC4AuPmTGS9a3D',
         // '8Ku7ykby9J9Mf5hqeUNHxhFnvXcCWcHMHiw3EAUc25eh',
@@ -16,7 +16,6 @@ export const BotConfig = {
         // 'Cx3vo64MnAnxEkKVSMbDazsFxxpNLoGYFdJW4Zripn6K',
         // '5XgFTiEA1X6P3DQStijxnhFMaRwaGzU2cguTtvMxpe9Y',
         // '5bWogTDsnzuDQZ9pRdvk74z1Qj3LRGFgPy9ZbDtiYBxS',
-        // 'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
         // 'N22uCb2j9GriychZJzh9t5idaddLdkHhANNH27GUPYC',
         // 'J9TfJHNu8PY78fP5s7fw29y8HE8fnRFUQKQ5Sm48ZqYi',
         // 'FTtgnLCyg6UuPGvxktbaRcqcryDQyF3NnE5smgSHkNzp',
@@ -25,10 +24,11 @@ export const BotConfig = {
         //'9XnGGrvk5x1j4w2reWPPSg1atnswRSXbSAB2CH1RkncH',
         //'A42h43yxnVGu1MgS97b1iSHK2fQP1VCpC9LEQdftgCN8',
         //'Gn9xi6m8327FkvF8exmJhK49Jn1vMKbefpRrAazrNPfr'
+        // 'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
     ],
     threshold: 1000,// 1000 SOL
     takeProfit: 1.3,// 30% Profit
-    tokenSwapAmount: 1,// 0.5 Sol
+    tokenSwapAmount: 0.5,// 0.5 Sol
     intervalTime: 1000 * 2,
 };
 
