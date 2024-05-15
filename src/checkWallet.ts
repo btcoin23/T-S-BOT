@@ -6,7 +6,7 @@ const moniterWallet = (trackWallet: string) => {
     const subscriptionId = connection.onAccountChange(
         WALLET_TRACK,
         (updatedAccountInfo) =>
-            console.log(`---Event Notification for ${trackWallet}--- \nNew Account :`, updatedAccountInfo.data),
+            console.log(`---Event Notification for ${trackWallet}--- \nNew Account :`, updatedAccountInfo.data.byteOffset),
         "confirmed"
     );
 }
