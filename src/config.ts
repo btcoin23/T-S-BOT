@@ -28,7 +28,7 @@ export const BotConfig = {
     ],
     threshold: 1000,// 1000 SOL
     takeProfit: 1.3,// 30% Profit
-    tokenSwapAmount: 0.5,// 0.5 Sol
+    tokenSwapAmount: 0.1,// 0.5 Sol
     intervalTime: 1000 * 2,
 };
 
