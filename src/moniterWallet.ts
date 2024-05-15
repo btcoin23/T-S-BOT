@@ -1,7 +1,7 @@
 import { PublicKey, LAMPORTS_PER_SOL, PartiallyDecodedInstruction } from '@solana/web3.js';
 import { getMint } from '@solana/spl-token';
 import { RAYDIUM_PUBLIC_KEY, connection, BotConfig } from './config';
-import { addToken, addWallet, getAllWallets } from './data';
+import { addToken, addWallet, getAllWallets, updatedTokenStatus2sell } from './data';
 
 export async function checkBalance(address: string) {
     try {
@@ -61,6 +61,7 @@ export async function moniterWallet(curAddress: string) {
                         const newTokenInfo = await getMint(connection, new PublicKey(newToken));
                         const decimal: number = newTokenInfo.decimals
                         console.log(`\n* Txid: ${tx.transaction.signatures} -> New token is minted: ${newToken}, Decimal: ${decimal}, Amount: ${amount}`);
+                        updatedTokenStatus2sell(newToken)
                     }
 
                     //check new Pool information

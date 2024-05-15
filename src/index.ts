@@ -38,7 +38,7 @@ const buySellToken = () => {
                 }else{
                     buyToken(bt);
                 }
-            }else if (bt.Status === "Sold"){
+            }else if (bt.Status === "Sold" || bt.Status === "Have2sell"){
                 const walletInfs = await getWalletTokenAccount(connection, wallet.publicKey);
                 const one = walletInfs.find(i => i.accountInfo.mint.toString() === bt.Mint);
                 if(one){

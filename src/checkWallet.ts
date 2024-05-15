@@ -3,7 +3,9 @@ import { connection, wallet } from './config';
 import { getWalletTokenAccount } from './util';
 async function test(){
     //wallet balance test
-
+    // connection.onSignature('signature', async(signatureResult: any)={
+        // console.log('here');
+    // });
     // const tokenMint = 'c8ZW1tFUbCRE8tSCawSU1AEi2jGBCaxEF5EnA6hokPH'
     // const walletTokenInfs = await getWalletTokenAccount(connection, wallet.publicKey);
     // // console.log(walletTokenInfs)
