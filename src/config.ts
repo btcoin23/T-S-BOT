@@ -36,7 +36,7 @@ export const BotConfig = {
 const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY; //chainge to your wallet private key
 
 //---------------------------------------------------------------- Constant setting
-const RPC_URL = 'https://white-neat-pool.solana-mainnet.quiknode.pro/54b0ef9ddb7ad7f1b3a7916401c702afff30cc2e/';
+const RPC_URL = 'https://white-neat-pool.solana-mainnet.quiknode.pro/cfe67fec23b12040';
 export const connection = new Connection(RPC_URL);
 export const makeTxVersion = TxVersion.V0; // LEGACY
 export const addLookupTableInfo = LOOKUP_TABLE_CACHE
