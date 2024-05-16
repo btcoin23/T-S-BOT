@@ -39,6 +39,7 @@ bower_components
 build/Release
 build/
 src/test.ts
+src/checkTxResult.ts
 # Dependency directories
 node_modules/
 jspm_packages/

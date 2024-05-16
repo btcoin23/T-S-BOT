@@ -129,16 +129,19 @@ const moniterWallet = (curWallet: string) => {
 const buyToken = async () => {
     const res = await swap(DEFAULT_TOKEN.WSOL, curToken, curAmmId, BotConfig.tokenSwapAmount * LAMPORTS_PER_SOL);
     console.log(`\n* Bought new token: ${curToken.mint} https://solscan.io/tx/${res}`);
-    setTimeout(async () => {
-        const walletInfs = await getWalletTokenAccount(connection, wallet.publicKey);
-        const one = walletInfs.find(i => i.accountInfo.mint.toString() === curToken.mint.toString());
-        if (!one) {
-            buyToken()
-            const curPrice = await getPrice(curToken.mint.toString())
-            if (curPrice && curPrice !== 0)
-                initialPrice = curPrice
+    const checkTxRes = setInterval(async () => {
+        const state = await connection.getSignatureStatus(res, { searchTransactionHistory: true });
+        if (state && state.value) {
+            if (state.value.err) {
+                buyToken()
+                const curPrice = await getPrice(curToken.mint.toString())
+                if (curPrice && curPrice !== 0)
+                    initialPrice = curPrice
+            }
+            else 
+                clearInterval(checkTxRes)
         }
-    }, 1000 * 60);
+    }, BotConfig.intervalTime)
 }
 
 const sellToken = async () => {
@@ -149,11 +152,19 @@ const sellToken = async () => {
         if (Number(bal) > 1000) {
             const res = await swap(curToken, DEFAULT_TOKEN.WSOL, curAmmId, Number(bal));
             console.log(`\n* Sold new Token: ${curToken.mint} https://solscan.io/tx/${res}`);
+
+            const checkTxRes = setInterval(async () => {
+                const state = await connection.getSignatureStatus(res, { searchTransactionHistory: true });
+                if (state && state.value) {
+                    if (state.value.err)
+                        sellToken()
+                    else 
+                        clearInterval(checkTxRes)
+                }
+            }, BotConfig.intervalTime)
         }
     }
-    setTimeout(() => {
-        sellToken()
-    }, 1000 * 60);
+    
 }
 
 moniterWallet(BotConfig.trackWallet);

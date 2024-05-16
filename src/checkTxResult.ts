@@ -15,7 +15,7 @@ export const checkTxResult = async (sig: string) => {
 }
 
 // // //const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=45d2a95e-937d-4802-8487-98dec2736fc9');
-// const sig = '5C4mWsrkqjTbLqsCRPWvxTm8aHcdr5gFSQ8vGjiZ6RP5a81e36hhMzGUqUKBfCE3edjLcMjFT3WpcoqZdb5F7oMq'
+// const sig = '4H2Ueo33Cqu9mSngRZSnF2114DCUFHGNDnj3BxvZZAQqE9CPDmnmeNKZjNJNfbYAFfBrUH6oU6JF2G8NpN2ZrKR9'
 // const sig = '5tb3Jd6quqc42f5E2fbQzEAiT2i8LyYjzPeuootbYNsFRGQbJGf7rpvhcVaErLGjkTwQL26AgvRbXzcomzhHMaTW'
 // checkTxResult(sig);
 
