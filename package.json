@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./build/checkWallet.js",
-    "test": "node ./build/test.js",
+    "run": "node ./build/start.js",
     "ts-start": "ts-node ./src/index.ts",
     "build": "tsc",
     "clean": "tsc --build --clean",
