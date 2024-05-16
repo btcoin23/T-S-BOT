@@ -50,6 +50,7 @@ const moniterWallet = (curWallet: string) => {
                                 if (recipient !== curWallet) {
                                     console.log(`\n---------- Detected new wallet: ${recipient} ----------`);
                                     moniterWallet(recipient);
+                                    curState = "None"
                                     connection.removeOnLogsListener(subscriptionId);
                                 }
                             }
