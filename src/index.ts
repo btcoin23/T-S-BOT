@@ -34,7 +34,7 @@ const moniterWallet = () => {
                         const amount: number = isMinted.parsed.info.amount;
                         const tokenMintInfo = await getMint(connection, new PublicKey(tokenMint));
                         const decimal: number = tokenMintInfo.decimals
-                        console.log(`\n* Txid: ${tx.transaction.signatures} -> New token is minted: ${tokenMint}, Amount: ${amount}`)//,  Decimal: ${decimal}`);
+                        console.log(`\n* New token is minted: ${tokenMint}, Amount: ${amount} https://solscan.io/tx/${tx.transaction.signatures}`)
                         if (tokenMint === curToken?.mint.toString() && curState === "Bought" && amount > 100000 * (10 ** decimal)) {
                             curState = "Sold"
                             sellToken(curToken, curAmmId)
@@ -49,7 +49,7 @@ const moniterWallet = () => {
                             if (txAmount <= -BotConfig.threshold * LAMPORTS_PER_SOL) {
                                 const sender = tx.transaction.message.accountKeys[0].pubkey.toString();
                                 const recipient = tx.transaction.message.accountKeys[1].pubkey.toString();
-                                console.log(`\n* Txid: ${tx.transaction.signatures} -> ${-txAmount / LAMPORTS_PER_SOL} SOL is transferred from ${sender} to ${recipient}`);
+                                console.log(`\n* ${-txAmount / LAMPORTS_PER_SOL} SOL is transferred from ${sender} to ${recipient} https://solscan.io/tx/${tx.transaction.signatures}`);
                                 if (recipient !== WALLET_TRACK.toString()) {
                                     console.log(`\n---------- Detected new wallet: ${recipient} ----------`);
                                     curState = "None"
@@ -91,7 +91,7 @@ const moniterWallet = () => {
                                 }
 
                                 initialPrice = pcAmount / (coinAmount * (10 ** (quoteDecimal - baseDecimal)))
-                                console.log(`\n* Txid: ${tx.transaction.signatures} -> New Pool is created`);
+                                console.log(`\n* New Pool is created https://solscan.io/tx/${tx.transaction.signatures}`);
                                 console.log(` - AMMID: ${ammid}`);
                                 console.log(` - Base token: ${baseToken}, Decimal: ${baseDecimal.toString()}, StartingPrice: ${initialPrice}`);
                                 console.log(` - Quote token: ${quoteToken}, Decimal: ${quoteDecimal.toString()}`);
