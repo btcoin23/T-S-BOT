@@ -6,21 +6,24 @@ import { connection, wallet, BotConfig, RAYDIUM_PUBLIC_KEY, DEFAULT_TOKEN } from
 import { getWalletTokenAccount } from './util';
 import { getPrice } from "./getPrice";
 
-let initialPrice: number;
-let curAmmId: string;
-let curToken: Token;
-let curState: string = "None";
+let curWallet = BotConfig.trackWallet;
 
-const moniterWallet = (curWallet: string) => {
-    console.log(`---------- Checking wallet: ${curWallet} ... ----------`);
-    const WALLET_TRACK = new PublicKey(curWallet)
-    const subscriptionId = connection.onLogs(
+const moniterWallet = (trackWallet: string) => {
+    console.log(`---------- Checking wallet: ${trackWallet} ... ----------`);
+
+    let initialPrice: number;
+    let curAmmId: string;
+    let curToken: Token;
+    let curState: string = "None";
+
+    const WALLET_TRACK = new PublicKey(trackWallet)
+    connection.onLogs(
         WALLET_TRACK,
         async ({ logs, err, signature }) => {
             if (err) return;
-            if (logs) {
+            if (logs && curWallet === trackWallet) {
                 const tx = await connection.getParsedTransaction(signature, { maxSupportedTransactionVersion: 0 });
-                console.log(tx);
+                // console.log(tx);
                 if (tx?.transaction) {
                     //check new token mint
                     const isMinted: any = tx.transaction.message.instructions.find((item: any) =>
@@ -34,7 +37,7 @@ const moniterWallet = (curWallet: string) => {
                         console.log(`\n* Txid: ${tx.transaction.signatures} -> New token is minted: ${tokenMint}, Amount: ${amount}`)//,  Decimal: ${decimal}`);
                         if (tokenMint === curToken?.mint.toString() && curState === "Bought" && amount > 100000 * (10 ** decimal)) {
                             curState = "Sold"
-                            sellToken()
+                            sellToken(curToken, curAmmId)
                         }
                     } else {
                         const isTransferred: any = tx.transaction.message.instructions.find((item: any) =>
@@ -47,11 +50,10 @@ const moniterWallet = (curWallet: string) => {
                                 const sender = tx.transaction.message.accountKeys[0].pubkey.toString();
                                 const recipient = tx.transaction.message.accountKeys[1].pubkey.toString();
                                 console.log(`\n* Txid: ${tx.transaction.signatures} -> ${-txAmount / LAMPORTS_PER_SOL} SOL is transferred from ${sender} to ${recipient}`);
-                                if (recipient !== curWallet) {
+                                if (recipient !== trackWallet) {
                                     console.log(`\n---------- Detected new wallet: ${recipient} ----------`);
                                     curState = "None"
                                     moniterWallet(recipient);
-                                    connection.removeOnLogsListener(subscriptionId);
                                 }
                             }
                         } else {
@@ -96,47 +98,45 @@ const moniterWallet = (curWallet: string) => {
                                 curToken = new Token(TOKEN_PROGRAM_ID, new PublicKey(baseToken), baseDecimal)
                                 curAmmId = ammid.toString()
                                 if (curState === "None") {
-                                    buyToken()
+                                    buyToken(curToken, curAmmId)
                                     curState = "Bought"
                                 }
                             }
                         }
                     }
-
-                    if (curToken && curState === "Bought") {
-                        const walletInfs = await getWalletTokenAccount(connection, wallet.publicKey);
-                        const one = walletInfs.find(i => i.accountInfo.mint.toString() === curToken.mint.toString());
-                        if (one) {
-                            const curPrice = await getPrice(curToken.mint.toString());
-                            if (curPrice) {
-                                console.log(`* TakeProfit of Token ${curToken.mint.toString()}: ${curPrice * 100 / initialPrice} %`);
-                                if (curPrice >= initialPrice * BotConfig.takeProfit) {
-                                    curState = "Sold"
-                                    sellToken()
-                                }
-                            }
-                        }
-                    }
-
                 }
 
             }
         },
         "finalized"
     );
+
+    setInterval(async() => {
+        if (curWallet === trackWallet && curToken && curState === "Bought") {
+            const walletInfs = await getWalletTokenAccount(connection, wallet.publicKey);
+            const one = walletInfs.find(i => i.accountInfo.mint.toString() === curToken.mint.toString());
+            if (one) {
+                const curPrice = await getPrice(curToken.mint.toString());
+                if (curPrice) {
+                    console.log(`* TakeProfit of Token ${curToken.mint.toString()}: ${curPrice * 100 / initialPrice} %`);
+                    if (curPrice >= initialPrice * BotConfig.takeProfit) {
+                        curState = "Sold"
+                        sellToken(curToken, curAmmId)
+                    }
+                }
+            }
+        }
+    }, BotConfig.intervalTime)
 }
 
-const buyToken = async () => {
-    const res = await swap(DEFAULT_TOKEN.WSOL, curToken, curAmmId, BotConfig.tokenSwapAmount * LAMPORTS_PER_SOL);
-    console.log(`\n* Bought new token: ${curToken.mint} https://solscan.io/tx/${res}`);
+const buyToken = async (bt: Token, ammId: string) => {
+    const res = await swap(DEFAULT_TOKEN.WSOL, bt, ammId, BotConfig.tokenSwapAmount * LAMPORTS_PER_SOL);
+    console.log(`\n* Bought new token: ${bt.mint} https://solscan.io/tx/${res}`);
     const checkTxRes = setInterval(async () => {
         const state = await connection.getSignatureStatus(res, { searchTransactionHistory: true });
         if (state && state.value) {
             if (state.value.err) {
-                buyToken()
-                const curPrice = await getPrice(curToken.mint.toString())
-                if (curPrice && curPrice !== 0)
-                    initialPrice = curPrice
+                buyToken(bt, ammId)
             }
             else 
                 clearInterval(checkTxRes)
@@ -144,20 +144,20 @@ const buyToken = async () => {
     }, BotConfig.intervalTime)
 }
 
-const sellToken = async () => {
+const sellToken = async (bt: Token, ammId: string) => {
     const walletInfs = await getWalletTokenAccount(connection, wallet.publicKey);
-    const one = walletInfs.find(i => i.accountInfo.mint.toString() === curToken.mint.toString());
+    const one = walletInfs.find(i => i.accountInfo.mint.toString() === bt.mint.toString());
     if (one) {
         const bal = one.accountInfo.amount
         if (Number(bal) > 1000) {
-            const res = await swap(curToken, DEFAULT_TOKEN.WSOL, curAmmId, Number(bal));
-            console.log(`\n* Sold new Token: ${curToken.mint} https://solscan.io/tx/${res}`);
+            const res = await swap(bt, DEFAULT_TOKEN.WSOL, ammId, Number(bal));
+            console.log(`\n* Sold new Token: ${bt.mint} https://solscan.io/tx/${res}`);
 
             const checkTxRes = setInterval(async () => {
                 const state = await connection.getSignatureStatus(res, { searchTransactionHistory: true });
                 if (state && state.value) {
                     if (state.value.err)
-                        sellToken()
+                        sellToken(bt, ammId)
                     else 
                         clearInterval(checkTxRes)
                 }
@@ -167,4 +167,4 @@ const sellToken = async () => {
     
 }
 
-moniterWallet(BotConfig.trackWallet);
+moniterWallet(curWallet);
