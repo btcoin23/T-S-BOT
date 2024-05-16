@@ -12,6 +12,7 @@ import {
 import { Keypair } from '@solana/web3.js';
 
 import {
+  BotConfig,
   connection,
   DEFAULT_TOKEN,
   makeTxVersion,
@@ -59,6 +60,12 @@ async function swapOnlyAmm(input: TestTxInputInfo) {
     amountIn: input.inputTokenAmount,
     amountOut: minAmountOut,
     fixedSide: 'in',
+    config: {
+      bypassAssociatedCheck: false,
+    },
+    computeBudgetConfig: {
+      microLamports: BotConfig.maxLamports,
+    },
     makeTxVersion,
   })
 
