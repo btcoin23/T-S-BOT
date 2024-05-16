@@ -4,7 +4,7 @@
   "description": "Solana Trading Sniper Bot",
   "main": "index.js",
   "scripts": {
-    "start": "node build/checkWallet.js",
+    "start": "node ./build/checkWallet.js",
     "ts-start": "ts-node ./src/index.ts",
     "build": "tsc",
     "clean": "tsc --build --clean",

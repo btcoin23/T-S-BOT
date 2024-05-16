@@ -5,28 +5,9 @@ import 'dotenv/config';
 
 //---------------------------------------------------------------- User setting
 export const BotConfig = {
-    trackWallet: 'BpVQf6r5KJ41Y5g8TTtb3dj1rDYmn68maptHW6oNZkZK',
-    // [
-        // '5GiJwg5QrLMjZ8wHLr6o98ck5qU92b4pAc7ZrcGpkdM4',
-        // '8gCibEuruXnD6scuFEgS1iUboUH11TsHEkDaLnNXyDiX',
-        // '2GzeNrucUMKzGahMDMNgtYAjHXmUPAuC4AuPmTGS9a3D',
-        // '8Ku7ykby9J9Mf5hqeUNHxhFnvXcCWcHMHiw3EAUc25eh',
-        // 'J7RmdJ3HnUE5issbeRC6uF64Q84JeZemokG8Vu48mxMy',
-        // '29hPG7SkqX2BberrydaoEnmKcbAZyj1r6U5qpTLS91cN',
-        // '5z4X9bJtHy6iz22uS3Bmrk3A5J3JhJowwN5K5BJ1GYz8',
-        // 'Cx3vo64MnAnxEkKVSMbDazsFxxpNLoGYFdJW4Zripn6K',
-        // '5XgFTiEA1X6P3DQStijxnhFMaRwaGzU2cguTtvMxpe9Y',
-        // '5bWogTDsnzuDQZ9pRdvk74z1Qj3LRGFgPy9ZbDtiYBxS',
+    trackWallet: '5M8AGZh3bq2YDuTpjPvHTSFW5NznAxkmqrcJgnKmb3JD',
         // 'N22uCb2j9GriychZJzh9t5idaddLdkHhANNH27GUPYC',
-        // 'J9TfJHNu8PY78fP5s7fw29y8HE8fnRFUQKQ5Sm48ZqYi',
-        // 'FTtgnLCyg6UuPGvxktbaRcqcryDQyF3NnE5smgSHkNzp',
-        // '7Mmzz7AAKJYfsMAXaoJSmBnFWVyXUwU7p3nK26Yz2gHY',
-        //'CU7aczodxt3y6sDYJNT1VRxY54PcbFkiNyRfxuRKjsPA',
-        //'9XnGGrvk5x1j4w2reWPPSg1atnswRSXbSAB2CH1RkncH',
-        //'A42h43yxnVGu1MgS97b1iSHK2fQP1VCpC9LEQdftgCN8',
-        //'Gn9xi6m8327FkvF8exmJhK49Jn1vMKbefpRrAazrNPfr'
         // 'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
-    // ],
     threshold: 1000,// 1000 SOL
     takeProfit: 1.1,// 30% Profit
     tokenSwapAmount: 0.01,// 0.5 Sol
