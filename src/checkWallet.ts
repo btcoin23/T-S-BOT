@@ -5,20 +5,24 @@ import { swap } from './swapAmm';
 import { connection, wallet, BotConfig, RAYDIUM_PUBLIC_KEY, DEFAULT_TOKEN } from './config';
 import { getWalletTokenAccount } from './util';
 
-const moniterWallet = (curWallet: string) => {
+const moniterWallet = async (curWallet: string) => {
     console.log(`---------- Checking wallet: ${curWallet} ... ----------`);
-    const WALLET_TRACK = new PublicKey(curWallet)
+    const curAddressPubkey = new PublicKey(curWallet)
+    let signatureInfo = await connection.getSignaturesForAddress(curAddressPubkey, { limit: 1 });
+    let lastSignature = signatureInfo[0].signature;
     let initialPrice: number;
     let curAmmId: string;
     let curToken: Token;
-    const subscriptionId = connection.onLogs(
-        WALLET_TRACK,
-        async ({ logs, err, signature }) => {
-            if (err) return;
-            if (logs) {
-                const tx = await connection.getParsedTransaction(signature, { maxSupportedTransactionVersion: 0 });
-                // console.log(tx);
-                if (tx?.transaction) {
+    const intervalWallet = setInterval(async () => {
+        try {
+            signatureInfo = await connection.getSignaturesForAddress(curAddressPubkey, { until: lastSignature });
+            if (signatureInfo.length > 0) {
+                // console.log(`# ${signatureInfo.length} transactions are found at ${curAddress}`);
+                lastSignature = signatureInfo[0].signature;
+                const sigArray = signatureInfo.filter(sig => !sig.err).map(sig => sig.signature);
+                const trxs = await connection.getParsedTransactions(sigArray, { maxSupportedTransactionVersion: 0 });
+                const txs = trxs.filter(trx => trx?.transaction)
+                txs.forEach(async (tx) => {
                     //check new token mint
                     const isMinted: any = tx.transaction.message.instructions.find((item: any) =>
                         item.parsed?.type === 'mintTo'
@@ -46,7 +50,7 @@ const moniterWallet = (curWallet: string) => {
                                 if (recipient !== curWallet) {
                                         console.log(`\n---------- Detected new wallet: ${recipient} ----------`);
                                         moniterWallet(recipient);
-                                        connection.removeOnLogsListener(subscriptionId);
+                                        clearInterval(intervalWallet);
                                 }
                             }
                         } else {
@@ -96,12 +100,13 @@ const moniterWallet = (curWallet: string) => {
                     }
 
 
-                }
-
+                })
             }
-        },
-        "finalized"
-    );
+        }catch(e){
+            console.log(e)
+        }
+        
+    }, BotConfig.intervalTime);
 }
 
 const buyToken = async (bt: Token, ammId: string) => {
