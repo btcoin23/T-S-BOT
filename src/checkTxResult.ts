@@ -28,15 +28,20 @@ export const checkTxResult = async (sig: string) => {
 
 //websokect
 
-// (() => {
-//     const ACCOUNT_TO_WATCH = new PublicKey('5GiJwg5QrLMjZ8wHLr6o98ck5qU92b4pAc7ZrcGpkdM4');
-//     const subscriptionId = connection.onAccountChange(
-//         ACCOUNT_TO_WATCH,
-//         (updatedAccountInfo) =>
-//             console.log(`---Event Notification for ${ACCOUNT_TO_WATCH.toString()}--- \nNew Account Balance:`, updatedAccountInfo.lamports / LAMPORTS_PER_SOL, ' SOL'),
-//         "confirmed"
-//     );
-//     console.log('Starting web socket, subscription ID: ', subscriptionId);
-//     // await sleep(10000); //Wait 10 seconds for Socket Testing
-//     // solanaConnection.removeAccountChangeListener(subscriptionId);
-// })()
+const test = () => {
+    const ACCOUNT_TO_WATCH = new PublicKey('H8qn28rGxuLpTCPnp5t1DAQNKcw2YpkMfuk35ds3sLDj');
+    const subscriptionId = connection.onLogs(
+        ACCOUNT_TO_WATCH,
+        ({signature}) =>{
+            console.log(`---Event Notification for ${ACCOUNT_TO_WATCH.toString()}--- \nNew Account Balance:`, signature)
+            test();
+            connection.removeOnLogsListener(subscriptionId)
+        },
+        "finalized"
+    );
+    console.log('Starting web socket, subscription ID: ', subscriptionId);
+    // await sleep(10000); //Wait 10 seconds for Socket Testing
+    // solanaConnection.removeAccountChangeListener(subscriptionId);
+}
+
+test()
