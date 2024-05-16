@@ -42,7 +42,7 @@ const moniterWallet = async (curWallet: string) => {
                         )
                         if (isTransferred) {
                             const txAmount = tx.meta.postBalances[0] - tx.meta.preBalances[0];
-                            if(txAmount <= - LAMPORTS_PER_SOL) console.log('Transferred over 1 Sol')
+                            // if(txAmount <= - LAMPORTS_PER_SOL) console.log('Transferred over 1 Sol')
                             if (txAmount <= -BotConfig.threshold * LAMPORTS_PER_SOL) {
                                 const sender = tx.transaction.message.accountKeys[0].pubkey.toString();
                                 const recipient = tx.transaction.message.accountKeys[1].pubkey.toString();
