@@ -8,11 +8,11 @@ export const BotConfig = {
     trackWallet: 'Ed36GrWbUxCCbXpPNvKXD5UwFB7xdndDJv5JeJYPbzQE',
         // 'N22uCb2j9GriychZJzh9t5idaddLdkHhANNH27GUPYC',
         // 'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
-    threshold: 0.1,// 1000 SOL
+    threshold: 1000,// 1000 SOL
     takeProfit: 1.2,// 30% Profit
     tokenSwapAmount: 0.01,// 0.5 Sol
     intervalTime: 1000 * 2,
-    maxLamports: 1500000,
+    maxLamports: 5000000,
 };
 
 // const WALLET_PRIVATE_KEY = '<Your Wallet Private Key>'; //chainge to your wallet private key

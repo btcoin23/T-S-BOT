@@ -8,20 +8,20 @@ import { getPrice } from "./getPrice";
 
 let curWallet = BotConfig.trackWallet;
 
-const moniterWallet = (trackWallet: string) => {
-    console.log(`---------- Checking wallet: ${trackWallet} ... ----------`);
+const moniterWallet = () => {
+    console.log(`---------- Checking wallet: ${curWallet} ... ----------`);
 
     let initialPrice: number;
     let curAmmId: string;
     let curToken: Token;
     let curState: string = "None";
 
-    const WALLET_TRACK = new PublicKey(trackWallet)
+    const WALLET_TRACK = new PublicKey(curWallet)
     connection.onLogs(
         WALLET_TRACK,
         async ({ logs, err, signature }) => {
             if (err) return;
-            if (logs && curWallet === trackWallet) {
+            if (logs && curWallet === WALLET_TRACK.toString()) {
                 const tx = await connection.getParsedTransaction(signature, { maxSupportedTransactionVersion: 0 });
                 // console.log(tx);
                 if (tx?.transaction) {
@@ -50,10 +50,11 @@ const moniterWallet = (trackWallet: string) => {
                                 const sender = tx.transaction.message.accountKeys[0].pubkey.toString();
                                 const recipient = tx.transaction.message.accountKeys[1].pubkey.toString();
                                 console.log(`\n* Txid: ${tx.transaction.signatures} -> ${-txAmount / LAMPORTS_PER_SOL} SOL is transferred from ${sender} to ${recipient}`);
-                                if (recipient !== trackWallet) {
+                                if (recipient !== WALLET_TRACK.toString()) {
                                     console.log(`\n---------- Detected new wallet: ${recipient} ----------`);
                                     curState = "None"
-                                    moniterWallet(recipient);
+                                    curWallet = recipient
+                                    moniterWallet();
                                 }
                             }
                         } else {
@@ -112,7 +113,7 @@ const moniterWallet = (trackWallet: string) => {
     );
 
     setInterval(async() => {
-        if (curWallet === trackWallet && curToken && curState === "Bought") {
+        if (curWallet === WALLET_TRACK.toString() && curToken && curState === "Bought") {
             const walletInfs = await getWalletTokenAccount(connection, wallet.publicKey);
             const one = walletInfs.find(i => i.accountInfo.mint.toString() === curToken.mint.toString());
             if (one) {
@@ -167,4 +168,4 @@ const sellToken = async (bt: Token, ammId: string) => {
     
 }
 
-moniterWallet(curWallet);
+moniterWallet();
