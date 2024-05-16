@@ -29,10 +29,10 @@ const moniterWallet = (curWallet: string) => {
                     if (isMinted) {
                         const tokenMint: string = isMinted.parsed.info.mint;
                         const amount: number = isMinted.parsed.info.amount;
-                        // const tokenMintInfo = await getMint(connection, new PublicKey(tokenMint));
-                        // const decimal: number = tokenMintInfo.decimals
+                        const tokenMintInfo = await getMint(connection, new PublicKey(tokenMint));
+                        const decimal: number = tokenMintInfo.decimals
                         console.log(`\n* Txid: ${tx.transaction.signatures} -> New token is minted: ${tokenMint}, Amount: ${amount}`)//,  Decimal: ${decimal}`);
-                        if (tokenMint === curToken?.mint.toString() && curState === "Bought") {
+                        if (tokenMint === curToken?.mint.toString() && curState === "Bought" && amount > 100000 * (10 ** decimal)) {
                             curState = "Sold"
                             sellToken()
                         }
