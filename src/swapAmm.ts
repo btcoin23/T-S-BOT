@@ -80,7 +80,7 @@ export async function swap(inputToken: Token, outputToken: Token, targetPool: st
     inputTokenAmount,
     slippage,
     walletTokenAccounts,
-    wallet: wallet,
+    wallet,
   });
 
   return res.txids[0];
