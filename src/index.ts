@@ -7,16 +7,17 @@ import { getWalletTokenAccount } from './util';
 import { getPrice } from "./getPrice";
 
 const moniterWallet = async () => {
-
+    
     let curWallet: PublicKey = new PublicKey(BotConfig.trackWallet);
     let curState: string = "None";
     let curAmmId: string;
     let curToken: Token;
     let initialPrice: number;
-
+    
     let signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 1 });
     let lastSignature = signatureInfo[0].signature;
-
+    
+    console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
     setInterval(async () => {
         try {
             signatureInfo = await connection.getSignaturesForAddress(curWallet, { until: lastSignature });
@@ -53,12 +54,12 @@ const moniterWallet = async () => {
                                     const recipient = tx.transaction.message.accountKeys[1].pubkey.toString();
                                     console.log(`\n* ${-txAmount / LAMPORTS_PER_SOL} SOL is transferred from ${sender} to ${recipient} https://solscan.io/tx/${tx.transaction.signatures}`);
                                     if (recipient !== curWallet.toString()) {
-                                        console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
-
+                                        
                                         curState = "None"
                                         curWallet = new PublicKey(recipient)
                                         signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 1 });
                                         lastSignature = signatureInfo[0].signature;
+                                        console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
                                     }
                                 }
                             } else {
