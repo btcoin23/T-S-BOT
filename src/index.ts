@@ -49,8 +49,8 @@ const moniterWallet = (curWallet: string) => {
                                 console.log(`\n* Txid: ${tx.transaction.signatures} -> ${-txAmount / LAMPORTS_PER_SOL} SOL is transferred from ${sender} to ${recipient}`);
                                 if (recipient !== curWallet) {
                                     console.log(`\n---------- Detected new wallet: ${recipient} ----------`);
-                                    moniterWallet(recipient);
                                     curState = "None"
+                                    moniterWallet(recipient);
                                     connection.removeOnLogsListener(subscriptionId);
                                 }
                             }
