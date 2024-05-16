@@ -18,8 +18,10 @@ export const BotConfig = {
 const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY; //chainge to your wallet private key
 
 //---------------------------------------------------------------- Constant setting
-const RPC_URL = 'https://white-neat-pool.solana-mainnet.quiknode.pro/cfe67fec23b12040';
-const WSS_URL = 'wss://white-neat-pool.solana-mainnet.quiknode.pro/cfe67fec23b12040';
+const RPC_URL = 'https://mainnet.helius-rpc.com/?api-key=862ad7b7-85d0-42aa-9f78-db1e34dc241b';
+// const RPC_URL = 'https://white-neat-pool.solana-mainnet.quiknode.pro/cfe67fec23b12040';
+const WSS_URL = 'wss://mainnet.helius-rpc.com/?api-key=862ad7b7-85d0-42aa-9f78-db1e34dc241b';
+// const WSS_URL = 'wss://white-neat-pool.solana-mainnet.quiknode.pro/cfe67fec23b12040';
 export const connection = new Connection(RPC_URL, {wsEndpoint: WSS_URL});
 export const makeTxVersion = TxVersion.V0; // LEGACY
 export const addLookupTableInfo = LOOKUP_TABLE_CACHE
@@ -31,5 +33,5 @@ export const DEFAULT_TOKEN = {
     'USDT': new Token(TOKEN_PROGRAM_ID, new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'), 6, 'USDT', 'USDT'),
     'USDC': new Token(TOKEN_PROGRAM_ID, new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'), 6, 'USDC', 'USDC'),
     'RAY': new Token(TOKEN_PROGRAM_ID, new PublicKey('4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R'), 6, 'RAY', 'RAY'),
-    'TEST': new Token(TOKEN_PROGRAM_ID, new PublicKey('S1XDJzrr2F5YkfCWeE8i52aySgE8XbyAHn3V5435rKz'), 8, 'TEST', 'TEST'),
+    'TEST': new Token(TOKEN_PROGRAM_ID, new PublicKey('KfsoGQPrCP47zYDekWZPjQsLTwMKC3keHxrKtQAFF7g'), 8, 'TEST', 'TEST'),
   }

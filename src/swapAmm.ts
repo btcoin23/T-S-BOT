@@ -103,4 +103,5 @@ export async function swap(inputToken: Token, outputToken: Token, targetPool: st
 
 
 // const amount: BigNumberish = new BN(15601927538 * (10 ** 8))
-// swap(DEFAULT_TOKEN.TEST, DEFAULT_TOKEN.WSOL, '63tktcWCNQChSG5gzqkjnoeYmJuKRxuPMvDWsaJS9932', amount)
+swap(DEFAULT_TOKEN.TEST, DEFAULT_TOKEN.WSOL, '21LEKaKsu7r2VK6GvjzcAnQ3r4D4JYs1osY1XHopEipM', 131394881717
+)
