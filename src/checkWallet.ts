@@ -112,21 +112,21 @@ const moniterWallet = async (curWallet: string) => {
 const buyToken = async (bt: Token, ammId: string) => {
 
     const res = await swap(DEFAULT_TOKEN.WSOL, bt, ammId, BotConfig.tokenSwapAmount * LAMPORTS_PER_SOL);
-    console.log(`\n* Bought new token: ${bt} https://solscan.io/tx/${res}`);
+    console.log(`\n* Bought new token: ${bt.mint} https://solscan.io/tx/${res}`);
     setTimeout(async () => {
         const walletInfs = await getWalletTokenAccount(connection, wallet.publicKey);
         const one = walletInfs.find(i => i.accountInfo.mint.toString() === bt.mint.toString());
-        if (one) {
+        if (!one) {
             buyToken(bt, ammId)
         }
     }, 1000 * 60);
 }
 
 const sellToken = async(bt: Token, ammId: string) => {
-    const walletTokenInfs = await getWalletTokenAccount(connection, wallet.publicKey);
-    const acc = walletTokenInfs.find(account => account.accountInfo.mint.toString() === bt.mint.toString());
-    if(acc){
-        const bal = acc.accountInfo.amount
+    const walletInfs = await getWalletTokenAccount(connection, wallet.publicKey);
+    const one = walletInfs.find(i => i.accountInfo.mint.toString() === bt.mint.toString());
+    if(one){
+        const bal = one.accountInfo.amount
         if(Number(bal) > 1000){
             const res = await swap(bt, DEFAULT_TOKEN.WSOL, ammId, Number(bal));
             console.log(`\n* Sold new Token: ${bt.mint} https://solscan.io/tx/${res}`);

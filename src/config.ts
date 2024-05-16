@@ -11,7 +11,7 @@ export const BotConfig = {
     threshold: 1000,// 1000 SOL
     takeProfit: 1.1,// 30% Profit
     tokenSwapAmount: 0.01,// 0.5 Sol
-    intervalTime: 1000,
+    intervalTime: 1000 * 2,
 };
 
 // const WALLET_PRIVATE_KEY = '<Your Wallet Private Key>'; //chainge to your wallet private key
