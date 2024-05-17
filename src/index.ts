@@ -47,8 +47,8 @@ const moniterWallet = async () => {
                                 if (recipient !== curWallet.toString()) {
                                     curState = "None"
                                     curWallet = new PublicKey(recipient)
-                                    signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 1 });
-                                    lastSignature = signatureInfo[0].signature;
+                                    signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 2 });
+                                    lastSignature = signatureInfo[1].signature;
                                     console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
                                 }
                             }
