@@ -22,7 +22,7 @@ const moniterWallet = async () => {
     setInterval(async () => {
         try {
             signatureInfo = await connection.getSignaturesForAddress(curWallet, { until: lastSignature });
-            if (signatureInfo.length > 0) {
+            if (signatureInfo.length > 0 && signatureInfo[0].signature.toString() !== lastSignature.toString()) {
                 lastSignature = signatureInfo[0].signature;
                 console.log(lastSignature)
                 const lastTx = await connection.getTransaction(lastSignature, { maxSupportedTransactionVersion: 0})
