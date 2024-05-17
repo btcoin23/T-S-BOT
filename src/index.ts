@@ -21,7 +21,7 @@ const moniterWallet = async () => {
     setInterval(async () => {
         try {
             signatureInfo = await connection.getSignaturesForAddress(curWallet, { until: lastSignature });
-            if (signatureInfo.length > 0) {
+            if (signatureInfo.length > 0 && signatureInfo[0].signature !== lastSignature) {
                 lastSignature = signatureInfo[0].signature;
                 const sigArray = signatureInfo.filter(sig => !sig.err).map(sig => sig.signature);
                 const trxs = await connection.getParsedTransactions(sigArray, { maxSupportedTransactionVersion: 0 });
@@ -54,7 +54,6 @@ const moniterWallet = async () => {
                                     const recipient = tx.transaction.message.accountKeys[1].pubkey.toString();
                                     console.log(`\n* ${-txAmount / LAMPORTS_PER_SOL} SOL is transferred from ${sender} to ${recipient} https://solscan.io/tx/${tx.transaction.signatures}`);
                                     if (recipient !== curWallet.toString()) {
-                                        
                                         curState = "None"
                                         curWallet = new PublicKey(recipient)
                                         signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 1 });
@@ -101,7 +100,7 @@ const moniterWallet = async () => {
                                     console.log(` - Base token: ${baseToken}, Decimal: ${baseDecimal.toString()}, StartingPrice: ${initialPrice}`);
                                     console.log(` - Quote token: ${quoteToken}, Decimal: ${quoteDecimal.toString()}`);
 
-                                    curToken = new Token(TOKEN_PROGRAM_ID, new PublicKey(baseToken), baseDecimal)
+                                    curToken = new Token(TOKEN_PROGRAM_ID, baseToken, baseDecimal)
                                     curAmmId = ammid.toString()
                                     if (curState === "None") {
                                         buyToken(curToken, curAmmId)
