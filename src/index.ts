@@ -22,10 +22,10 @@ const moniterWallet = async () => {
         try {
             signatureInfo = await connection.getSignaturesForAddress(curWallet, { until: lastSignature });
             if (signatureInfo.length > 0) {
-                const sigArray = signatureInfo.filter(sig => !sig.err && sig.blockTime).map(sig => sig.signature);
+                const sigArray = signatureInfo.filter(sig => !sig.err).map(sig => sig.signature);
                 const trxs = await connection.getParsedTransactions(sigArray, { maxSupportedTransactionVersion: 0 });
                 if (trxs.length > 0) {
-                    const txs = trxs.filter(trx => trx?.transaction)
+                    const txs = trxs.filter(trx => trx?.transaction && trx.blockTime)
                     const lastTx = txs[0]
                     const lastTimeStamp = lastTx.blockTime
                     // console.log(lastTimeStamp)
