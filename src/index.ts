@@ -63,7 +63,7 @@ const moniterWallet = async () => {
                                         'Signature': `https://solscan.io/tx/${tx.transaction.signatures}`,
                                         'From': sender,
                                         'to': recipient,
-                                        'Amount': -txAmount / LAMPORTS_PER_SOL
+                                        'Amount': `${-txAmount / LAMPORTS_PER_SOL} SOL`
                                     }
                                     console.log(`\n# Detected over ${BotConfig.threshold} Sol transferring`)
                                     console.table(log)
@@ -116,7 +116,7 @@ const moniterWallet = async () => {
                                         'Quote Mint': quoteToken.toString(),
                                         'Base Decimal': baseDecimal,
                                         'Quote Decimal': quoteDecimal,
-                                        'Starting Price': initialPrice,
+                                        'Starting Price': `${initialPrice} SOL`,
                                     }
                                     console.log('\n# New Pool is created')
                                     console.table(log)
@@ -160,7 +160,7 @@ const buyToken = async (bt: Token, ammId: string) => {
         const log = {
             'Signature': `https://solscan.io/tx/${res}`,
             'Token Address': bt.mint.toString(),
-            'Spent': `${BotConfig.tokenSwapAmount} Sol`
+            'Spent': `${BotConfig.tokenSwapAmount} SOL`
         }
         console.log(`\n# Bought new token`)
         console.table(log)
