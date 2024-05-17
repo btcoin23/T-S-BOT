@@ -28,52 +28,50 @@ const moniterWallet = async () => {
                 const txs = trxs.filter(trx => trx?.transaction)
                 txs.forEach(async (tx) => {
                     if (tx?.transaction) {
-                        //check new token mint
-                        const isMinted: any = tx.transaction.message.instructions.find((item: any) =>
-                            item.parsed?.type === 'mintTo'
+                        const isTransferred: any = tx.transaction.message.instructions.find((item: any) =>
+                            item.parsed?.type === 'transfer'
                         )
-                        if (isMinted) {
-                            const tokenMint: string = isMinted.parsed.info.mint;
-                            const amount: number = isMinted.parsed.info.amount;
-                            const tokenMintInfo = await getMint(connection, new PublicKey(tokenMint));
-                            const decimal: number = tokenMintInfo.decimals
-                            const log = {
-                                'Signature': `https://solscan.io/tx/${tx.transaction.signatures}`,
-                                'Token Mint': tokenMint,
-                                'Decimal': decimal,
-                                'Amount': amount,
-                            }
-                            console.log('\n# New token is minted')
-                            console.table(log)
-                            if (tokenMint === curToken?.mint.toString() && curState === "Bought" && amount > 100000 * (10 ** decimal)) {
-                                curState = "Sold"
-                                sellToken(curToken, curAmmId)
+                        if (isTransferred) {
+                            const txAmount = tx.meta.postBalances[0] - tx.meta.preBalances[0];
+                            if (txAmount <= -BotConfig.threshold * LAMPORTS_PER_SOL) {
+                                const sender = tx.transaction.message.accountKeys[0].pubkey.toString();
+                                const recipient = tx.transaction.message.accountKeys[1].pubkey.toString();
+                                const log = {
+                                    'Signature': `https://solscan.io/tx/${tx.transaction.signatures}`,
+                                    'From': sender,
+                                    'to': recipient,
+                                    'Amount': `${-txAmount / LAMPORTS_PER_SOL} SOL`
+                                }
+                                console.log(`\n# Detected over ${BotConfig.threshold} Sol transferring`)
+                                console.table(log)
+                                if (recipient !== curWallet.toString()) {
+                                    curState = "None"
+                                    curWallet = new PublicKey(recipient)
+                                    signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 1 });
+                                    lastSignature = signatureInfo[0].signature;
+                                    console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
+                                }
                             }
                         } else {
-                            const isTransferred: any = tx.transaction.message.instructions.find((item: any) =>
-                                item.parsed?.type === 'transfer'
+                            const isMinted: any = tx.transaction.message.instructions.find((item: any) =>
+                                item.parsed?.type === 'mintTo'
                             )
-                            if (isTransferred) {
-                                const txAmount = tx.meta.postBalances[0] - tx.meta.preBalances[0];
-                                // if(txAmount <= - LAMPORTS_PER_SOL) console.log('Transferred over 1 Sol')
-                                if (txAmount <= -BotConfig.threshold * LAMPORTS_PER_SOL) {
-                                    const sender = tx.transaction.message.accountKeys[0].pubkey.toString();
-                                    const recipient = tx.transaction.message.accountKeys[1].pubkey.toString();
-                                    const log = {
-                                        'Signature': `https://solscan.io/tx/${tx.transaction.signatures}`,
-                                        'From': sender,
-                                        'to': recipient,
-                                        'Amount': `${-txAmount / LAMPORTS_PER_SOL} SOL`
-                                    }
-                                    console.log(`\n# Detected over ${BotConfig.threshold} Sol transferring`)
-                                    console.table(log)
-                                    if (recipient !== curWallet.toString()) {
-                                        curState = "None"
-                                        curWallet = new PublicKey(recipient)
-                                        signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 1 });
-                                        lastSignature = signatureInfo[0].signature;
-                                        console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
-                                    }
+                            if (isMinted) {
+                                const tokenMint: string = isMinted.parsed.info.mint;
+                                const amount: number = isMinted.parsed.info.amount;
+                                const tokenMintInfo = await getMint(connection, new PublicKey(tokenMint));
+                                const decimal: number = tokenMintInfo.decimals
+                                const log = {
+                                    'Signature': `https://solscan.io/tx/${tx.transaction.signatures}`,
+                                    'Token Mint': tokenMint,
+                                    'Decimal': decimal,
+                                    'Amount': amount,
+                                }
+                                console.log('\n# New token is minted')
+                                console.table(log)
+                                if (tokenMint === curToken?.mint.toString() && curState === "Bought" && amount > 100000 * (10 ** decimal)) {
+                                    curState = "Sold"
+                                    sellToken(curToken, curAmmId)
                                 }
                             } else {
                                 //check new Pool information
