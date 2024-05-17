@@ -17,8 +17,8 @@ export const BotConfig = {
 
 
 //---------------------------------------------------------------- Constant setting
-const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 const RPC_URL = process.env.RPC_URL;
+const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 export const connection = new Connection(RPC_URL)//, {wsEndpoint: WSS_URL});
 export const makeTxVersion = TxVersion.V0; // LEGACY
 export const addLookupTableInfo = LOOKUP_TABLE_CACHE
