@@ -24,7 +24,6 @@ const moniterWallet = async () => {
             if (signatureInfo.length > 0 && signatureInfo[0].signature.toString() !== lastSignature.toString()) {
                 lastSignature = signatureInfo[0].signature;
                 // console.log(lastSignature)
-                const lastTx = await connection.getTransaction(lastSignature, { maxSupportedTransactionVersion: 0})
                 const sigArray = signatureInfo.filter(sig => !sig.err).map(sig => sig.signature);
                 const trxs = await connection.getParsedTransactions(sigArray, { maxSupportedTransactionVersion: 0 });
                 const txs = trxs.filter(trx => trx?.transaction)
