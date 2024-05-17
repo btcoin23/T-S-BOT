@@ -176,7 +176,7 @@ const buyToken = async (bt: Token, ammId: string) => {
             }
         }, BotConfig.intervalTime)
     } catch (e) {
-        console.log(`\n# Error while trying to buy token: ${bt.mint}`)
+        console.log(`\n# Error while trying to buy token: ${bt.mint}, ${e}`)
     }
 }
 
@@ -209,7 +209,7 @@ const sellToken = async (bt: Token, ammId: string) => {
             }
         }
     } catch (e) {
-        console.log(`\n# Error while trying to sell token: ${bt.mint}`)
+        console.log(`\n# Error while trying to sell token: ${bt.mint}\n ${e}`)
     }
 }
 
