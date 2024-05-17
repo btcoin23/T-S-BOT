@@ -5,6 +5,7 @@ import { swap } from './swapAmm';
 import { connection, wallet, BotConfig, RAYDIUM_PUBLIC_KEY, DEFAULT_TOKEN } from './config';
 import { getWalletTokenAccount } from './util';
 import { getPrice } from "./getPrice";
+import { time } from "console";
 
 const moniterWallet = async () => {
 
@@ -22,117 +23,113 @@ const moniterWallet = async () => {
         try {
             signatureInfo = await connection.getSignaturesForAddress(curWallet, { until: lastSignature });
             if (signatureInfo.length > 0) {
+                lastSignature = signatureInfo[0].signature;
+                console.log(lastSignature)
+                const lastTx = await connection.getTransaction(lastSignature, { maxSupportedTransactionVersion: 0})
+                const lastTimeStamp = lastTx.blockTime
                 const sigArray = signatureInfo.filter(sig => !sig.err).map(sig => sig.signature);
                 const trxs = await connection.getParsedTransactions(sigArray, { maxSupportedTransactionVersion: 0 });
-                if (trxs.length > 0) {
-                    const txs = trxs.filter(trx => trx?.transaction && trx.blockTime)
-                    const lastTx = txs[0]
-                    const lastTimeStamp = lastTx.blockTime
-                    // console.log(lastTimeStamp)
-                    lastSignature = lastTx.transaction.signatures[0]
-
-                    txs.forEach(async (tx) => {
-                        if (tx?.transaction && tx.blockTime >= lastTimeStamp) {
-                            const isTransferred: any = tx.transaction.message.instructions.find((item: any) =>
-                                item.parsed?.type === 'transfer'
-                            )
-                            if (isTransferred) {
-                                const txAmount = tx.meta.postBalances[0] - tx.meta.preBalances[0];
-                                if (txAmount <= -BotConfig.threshold * LAMPORTS_PER_SOL) {
-                                    const sender = tx.transaction.message.accountKeys[0].pubkey.toString();
-                                    const recipient = tx.transaction.message.accountKeys[1].pubkey.toString();
-                                    const log = {
-                                        'Signature': `https://solscan.io/tx/${tx.transaction.signatures}`,
-                                        'From': sender,
-                                        'to': recipient,
-                                        'Amount': `${-txAmount / LAMPORTS_PER_SOL} SOL`
-                                    }
-                                    console.log(`\n# Detected over ${BotConfig.threshold} Sol transferring`)
-                                    console.table(log)
-                                    if (recipient !== curWallet.toString()) {
-                                        curState = "None"
-                                        curWallet = new PublicKey(recipient)
-                                        signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 10 });
-                                        signatureInfo = signatureInfo.filter(i => i && !i.err && i.blockTime)
-                                        lastSignature = signatureInfo[0].signature;
-                                        console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
-                                    }
+                const txs = trxs.filter(trx => trx?.transaction)
+                txs.forEach(async (tx) => {
+                    if (tx?.transaction && tx.blockTime >= lastTimeStamp) {
+                        const isTransferred: any = tx.transaction.message.instructions.find((item: any) =>
+                            item.parsed?.type === 'transfer'
+                        )
+                        if (isTransferred) {
+                            const txAmount = tx.meta.postBalances[0] - tx.meta.preBalances[0];
+                            if (txAmount <= -BotConfig.threshold * LAMPORTS_PER_SOL) {
+                                const sender = tx.transaction.message.accountKeys[0].pubkey.toString();
+                                const recipient = tx.transaction.message.accountKeys[1].pubkey.toString();
+                                const log = {
+                                    'Signature': `https://solscan.io/tx/${tx.transaction.signatures}`,
+                                    'From': sender,
+                                    'to': recipient,
+                                    'Amount': `${-txAmount / LAMPORTS_PER_SOL} SOL`
                                 }
+                                console.log(`\n# Detected over ${BotConfig.threshold} Sol transferring`)
+                                console.table(log)
+                                if (recipient !== curWallet.toString()) {
+                                    curState = "None"
+                                    curWallet = new PublicKey(recipient)
+                                    signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 1 });
+                                    lastSignature = signatureInfo[0].signature;
+                                    console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
+                                }
+                            }
+                        } else {
+                            const isMinted: any = tx.transaction.message.instructions.find((item: any) =>
+                                item.parsed?.type === 'mintTo'
+                            )
+                            if (isMinted) {
+                                const tokenMint: string = isMinted.parsed.info.mint;
+                                const amount: number = isMinted.parsed.info.amount;
+                                const tokenMintInfo = await getMint(connection, new PublicKey(tokenMint));
+                                const decimal: number = tokenMintInfo.decimals
+                                const log = {
+                                    'Signature': `https://solscan.io/tx/${tx.transaction.signatures}`,
+                                    'Token Mint': tokenMint,
+                                    'Decimal': decimal,
+                                    'Amount': amount,
+                                }
+                                console.log('\n# New token is minted')
+                                console.table(log)
+
                             } else {
-                                const isMinted: any = tx.transaction.message.instructions.find((item: any) =>
-                                    item.parsed?.type === 'mintTo'
-                                )
-                                if (isMinted) {
-                                    const tokenMint: string = isMinted.parsed.info.mint;
-                                    const amount: number = isMinted.parsed.info.amount;
-                                    const tokenMintInfo = await getMint(connection, new PublicKey(tokenMint));
-                                    const decimal: number = tokenMintInfo.decimals
+                                //check new Pool information
+                                const interactRaydium = tx.transaction.message.instructions.find((item: any) =>
+                                    item.programId.toString() === RAYDIUM_PUBLIC_KEY
+                                ) as PartiallyDecodedInstruction
+                                const createdPool = tx.meta.logMessages?.find((item: string) => item.includes('Create'))
+                                if (interactRaydium && createdPool) {
+
+                                    const ammid = interactRaydium.accounts[4]
+                                    const baseToken = interactRaydium.accounts[8]
+                                    const quoteToken = interactRaydium.accounts[9]
+
+                                    const baseTokenInfo = await getMint(connection, baseToken);
+                                    const quoteTokenInfo = await getMint(connection, quoteToken);
+
+                                    const baseDecimal = baseTokenInfo.decimals;
+                                    const quoteDecimal = quoteTokenInfo.decimals;
+
+                                    const res = tx.meta.logMessages?.find(item => item.includes("InitializeInstruction2"));
+                                    const keyValuePairs = res.split(", ");
+
+                                    let pcAmount = null;
+                                    let coinAmount = null;
+                                    for (let i = 0; i < keyValuePairs.length; i++) {
+                                        const pair = keyValuePairs[i].split(": ");
+
+                                        if (pair[0] === "init_pc_amount") {
+                                            pcAmount = parseInt(pair[1], 10); // Convert the value to an integer
+                                        } else if (pair[0] === "init_coin_amount") {
+                                            coinAmount = parseInt(pair[1], 10); // Convert the value to an integer
+                                        }
+                                    }
+
+                                    initialPrice = pcAmount / (coinAmount * (10 ** (quoteDecimal - baseDecimal)))
                                     const log = {
                                         'Signature': `https://solscan.io/tx/${tx.transaction.signatures}`,
-                                        'Token Mint': tokenMint,
-                                        'Decimal': decimal,
-                                        'Amount': amount,
+                                        'AMMID': ammid.toString(),
+                                        'Base Mint': baseToken.toString(),
+                                        'Quote Mint': quoteToken.toString(),
+                                        'Base Decimal': baseDecimal,
+                                        'Quote Decimal': quoteDecimal,
+                                        'Starting Price': `${initialPrice} SOL`,
                                     }
-                                    console.log('\n# New token is minted')
+                                    console.log('\n# New Pool is created')
                                     console.table(log)
-
-                                } else {
-                                    //check new Pool information
-                                    const interactRaydium = tx.transaction.message.instructions.find((item: any) =>
-                                        item.programId.toString() === RAYDIUM_PUBLIC_KEY
-                                    ) as PartiallyDecodedInstruction
-                                    const createdPool = tx.meta.logMessages?.find((item: string) => item.includes('Create'))
-                                    if (interactRaydium && createdPool) {
-
-                                        const ammid = interactRaydium.accounts[4]
-                                        const baseToken = interactRaydium.accounts[8]
-                                        const quoteToken = interactRaydium.accounts[9]
-
-                                        const baseTokenInfo = await getMint(connection, baseToken);
-                                        const quoteTokenInfo = await getMint(connection, quoteToken);
-
-                                        const baseDecimal = baseTokenInfo.decimals;
-                                        const quoteDecimal = quoteTokenInfo.decimals;
-
-                                        const res = tx.meta.logMessages?.find(item => item.includes("InitializeInstruction2"));
-                                        const keyValuePairs = res.split(", ");
-
-                                        let pcAmount = null;
-                                        let coinAmount = null;
-                                        for (let i = 0; i < keyValuePairs.length; i++) {
-                                            const pair = keyValuePairs[i].split(": ");
-
-                                            if (pair[0] === "init_pc_amount") {
-                                                pcAmount = parseInt(pair[1], 10); // Convert the value to an integer
-                                            } else if (pair[0] === "init_coin_amount") {
-                                                coinAmount = parseInt(pair[1], 10); // Convert the value to an integer
-                                            }
-                                        }
-
-                                        initialPrice = pcAmount / (coinAmount * (10 ** (quoteDecimal - baseDecimal)))
-                                        const log = {
-                                            'Signature': `https://solscan.io/tx/${tx.transaction.signatures}`,
-                                            'AMMID': ammid.toString(),
-                                            'Base Mint': baseToken.toString(),
-                                            'Quote Mint': quoteToken.toString(),
-                                            'Base Decimal': baseDecimal,
-                                            'Quote Decimal': quoteDecimal,
-                                            'Starting Price': `${initialPrice} SOL`,
-                                        }
-                                        console.log('\n# New Pool is created')
-                                        console.table(log)
-                                        curToken = new Token(TOKEN_PROGRAM_ID, baseToken, baseDecimal)
-                                        curAmmId = ammid.toString()
-                                        if (curState === "None") {
-                                            buyToken(curToken, curAmmId)
-                                            curState = "Bought"
-                                        }
+                                    curToken = new Token(TOKEN_PROGRAM_ID, baseToken, baseDecimal)
+                                    curAmmId = ammid.toString()
+                                    if (curState === "None") {
+                                        buyToken(curToken, curAmmId)
+                                        curState = "Bought"
                                     }
                                 }
                             }
                         }
-                    });
-                }
+                    }
+                });
             }
 
             if (curToken && curState === "Bought") {
