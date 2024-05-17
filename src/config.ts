@@ -15,13 +15,10 @@ export const BotConfig = {
     maxLamports: 5000000,
 };
 
-const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY; //chainge to your wallet private key
 
 //---------------------------------------------------------------- Constant setting
-const RPC_URL = 'https://mainnet.helius-rpc.com/?api-key=862ad7b7-85d0-42aa-9f78-db1e34dc241b';
-// const WSS_URL = 'wss://mainnet.helius-rpc.com/?api-key=862ad7b7-85d0-42aa-9f78-db1e34dc241b';
-// const RPC_URL = 'https://white-neat-pool.solana-mainnet.quiknode.pro/cfe67fec23b12040';
-// const WSS_URL = 'wss://white-neat-pool.solana-mainnet.quiknode.pro/cfe67fec23b12040';
+const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
+const RPC_URL = process.env.RPC_URL;
 export const connection = new Connection(RPC_URL)//, {wsEndpoint: WSS_URL});
 export const makeTxVersion = TxVersion.V0; // LEGACY
 export const addLookupTableInfo = LOOKUP_TABLE_CACHE
