@@ -5,7 +5,7 @@ import 'dotenv/config';
 
 //---------------------------------------------------------------- User setting
 export const BotConfig = {
-    trackWallet: 'EmhHDxrZRXvxwWsFRQfK9EwBxBesHgA8f9wut5FLaKJA',
+    trackWallet: 'N22uCb2j9GriychZJzh9t5idaddLdkHhANNH27GUPYC',
         // 'N22uCb2j9GriychZJzh9t5idaddLdkHhANNH27GUPYC',
         // 'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
     threshold: 1000,// 1000 SOL
@@ -20,8 +20,10 @@ const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY; //chainge to your wal
 
 //---------------------------------------------------------------- Constant setting
 const RPC_URL = 'https://mainnet.helius-rpc.com/?api-key=862ad7b7-85d0-42aa-9f78-db1e34dc241b';
-const WSS_URL = 'wss://mainnet.helius-rpc.com/?api-key=862ad7b7-85d0-42aa-9f78-db1e34dc241b';
-export const connection = new Connection(RPC_URL, {wsEndpoint: WSS_URL});
+// const WSS_URL = 'wss://mainnet.helius-rpc.com/?api-key=862ad7b7-85d0-42aa-9f78-db1e34dc241b';
+// const RPC_URL = 'https://white-neat-pool.solana-mainnet.quiknode.pro/cfe67fec23b12040';
+// const WSS_URL = 'wss://white-neat-pool.solana-mainnet.quiknode.pro/cfe67fec23b12040';
+export const connection = new Connection(RPC_URL)//, {wsEndpoint: WSS_URL});
 export const makeTxVersion = TxVersion.V0; // LEGACY
 export const addLookupTableInfo = LOOKUP_TABLE_CACHE
 export const RAYDIUM_PUBLIC_KEY = "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8";
