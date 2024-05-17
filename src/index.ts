@@ -21,7 +21,6 @@ const moniterWallet = async () => {
     console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
     setInterval(async () => {
         try {
-            console.log(time)
             signatureInfo = await connection.getSignaturesForAddress(curWallet, { until: lastSignature });
             if (signatureInfo.length > 0) {
                 lastSignature = signatureInfo[0].signature;
