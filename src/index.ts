@@ -5,6 +5,7 @@ import { swap } from './swapAmm';
 import { connection, wallet, BotConfig, RAYDIUM_PUBLIC_KEY, DEFAULT_TOKEN } from './config';
 import { getWalletTokenAccount } from './util';
 import { getPrice } from "./getPrice";
+import { time } from "console";
 
 const moniterWallet = async () => {
 
@@ -20,14 +21,17 @@ const moniterWallet = async () => {
     console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
     setInterval(async () => {
         try {
+            console.log(time)
             signatureInfo = await connection.getSignaturesForAddress(curWallet, { until: lastSignature });
-            if (signatureInfo.length > 0 && signatureInfo[0].signature !== lastSignature) {
+            if (signatureInfo.length > 0) {
                 lastSignature = signatureInfo[0].signature;
+                const lastTx = await connection.getTransaction(lastSignature, { maxSupportedTransactionVersion: 0})
+                const lastTimeStamp = lastTx.blockTime
                 const sigArray = signatureInfo.filter(sig => !sig.err).map(sig => sig.signature);
                 const trxs = await connection.getParsedTransactions(sigArray, { maxSupportedTransactionVersion: 0 });
                 const txs = trxs.filter(trx => trx?.transaction)
                 txs.forEach(async (tx) => {
-                    if (tx?.transaction) {
+                    if (tx?.transaction && tx.blockTime >= lastTimeStamp) {
                         const isTransferred: any = tx.transaction.message.instructions.find((item: any) =>
                             item.parsed?.type === 'transfer'
                         )
@@ -47,8 +51,8 @@ const moniterWallet = async () => {
                                 if (recipient !== curWallet.toString()) {
                                     curState = "None"
                                     curWallet = new PublicKey(recipient)
-                                    signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 2 });
-                                    lastSignature = signatureInfo[1].signature;
+                                    signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 1 });
+                                    lastSignature = signatureInfo[0].signature;
                                     console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
                                 }
                             }
@@ -69,10 +73,7 @@ const moniterWallet = async () => {
                                 }
                                 console.log('\n# New token is minted')
                                 console.table(log)
-                                if (tokenMint === curToken?.mint.toString() && curState === "Bought" && amount > 100000 * (10 ** decimal)) {
-                                    curState = "Sold"
-                                    sellToken(curToken, curAmmId)
-                                }
+
                             } else {
                                 //check new Pool information
                                 const interactRaydium = tx.transaction.message.instructions.find((item: any) =>
