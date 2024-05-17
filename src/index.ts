@@ -23,12 +23,14 @@ const moniterWallet = async () => {
         try {
             signatureInfo = await connection.getSignaturesForAddress(curWallet, { until: lastSignature });
             if (signatureInfo.length > 0) {
-                lastSignature = signatureInfo[0].signature;
-                const lastTx = await connection.getTransaction(lastSignature, { maxSupportedTransactionVersion: 0})
-                const lastTimeStamp = lastTx.blockTime
+
                 const sigArray = signatureInfo.filter(sig => !sig.err).map(sig => sig.signature);
                 const trxs = await connection.getParsedTransactions(sigArray, { maxSupportedTransactionVersion: 0 });
                 const txs = trxs.filter(trx => trx?.transaction)
+                const lastTx = txs[0]
+                const lastTimeStamp = lastTx.blockTime
+                lastSignature = lastTx.transaction.signatures[0]
+
                 txs.forEach(async (tx) => {
                     if (tx?.transaction && tx.blockTime >= lastTimeStamp) {
                         const isTransferred: any = tx.transaction.message.instructions.find((item: any) =>
