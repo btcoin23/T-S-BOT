@@ -13,6 +13,7 @@ const moniterWallet = async () => {
     let curAmmId: string;
     let curToken: Token;
     let initialPrice: number;
+    let newTokenMint: string;
 
     let signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 1 });
     let lastSignature = signatureInfo[0].signature;
@@ -60,7 +61,8 @@ const moniterWallet = async () => {
                             )
                             if (isMinted) {
                                 const tokenMint: string = isMinted.parsed.info.mint;
-                                if(curToken?.mint?.toString() === tokenMint) return
+                                if(newTokenMint === tokenMint) return
+                                newTokenMint = tokenMint;
                                 const amount: number = isMinted.parsed.info.amount;
                                 const tokenMintInfo = await getMint(connection, new PublicKey(tokenMint));
                                 const decimal: number = tokenMintInfo.decimals
