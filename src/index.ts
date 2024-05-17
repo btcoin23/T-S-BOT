@@ -45,10 +45,10 @@ const moniterWallet = async () => {
                                     signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 1 });
                                     lastSignature = signatureInfo[0].signature;
                                     const log = {
-                                        'Signature': `https://solscan.io/tx/${tx.transaction.signatures}`,
-                                        'From': sender,
-                                        'to': recipient,
-                                        'Amount': `${-txAmount / LAMPORTS_PER_SOL} SOL`
+                                        'Signature:': `https://solscan.io/tx/${tx.transaction.signatures}`,
+                                        'From:': sender,
+                                        'To:': recipient,
+                                        'Amount:': `${-txAmount / LAMPORTS_PER_SOL} SOL`
                                     }
                                     console.log(`\n# Detected over ${BotConfig.threshold} Sol transferring`)
                                     console.table(log)
@@ -67,10 +67,10 @@ const moniterWallet = async () => {
                                 const tokenMintInfo = await getMint(connection, new PublicKey(tokenMint));
                                 const decimal: number = tokenMintInfo.decimals
                                 const log = {
-                                    'Signature': `https://solscan.io/tx/${tx.transaction.signatures}`,
-                                    'Token Mint': tokenMint,
-                                    'Decimal': decimal,
-                                    'Amount': amount,
+                                    'Signature:': `https://solscan.io/tx/${tx.transaction.signatures}`,
+                                    'Token Mint:': tokenMint,
+                                    'Decimal:': decimal,
+                                    'Amount:': amount,
                                 }
                                 console.log('\n# New token is minted')
                                 console.table(log)
@@ -111,13 +111,13 @@ const moniterWallet = async () => {
 
                                     initialPrice = pcAmount / (coinAmount * (10 ** (quoteDecimal - baseDecimal)))
                                     const log = {
-                                        'Signature': `https://solscan.io/tx/${tx.transaction.signatures}`,
-                                        'AMMID': ammid.toString(),
-                                        'Base Mint': baseToken.toString(),
-                                        'Quote Mint': quoteToken.toString(),
-                                        'Base Decimal': baseDecimal,
-                                        'Quote Decimal': quoteDecimal,
-                                        'Starting Price': `${initialPrice} SOL`,
+                                        'Signature:': `https://solscan.io/tx/${tx.transaction.signatures}`,
+                                        'AMMID:': ammid.toString(),
+                                        'Base Mint:': baseToken.toString(),
+                                        'Quote Mint:': quoteToken.toString(),
+                                        'Base Decimal:': baseDecimal,
+                                        'Quote Decimal:': quoteDecimal,
+                                        'Starting Price:': `${initialPrice} SOL`,
                                     }
                                     console.log('\n# New Pool is created')
                                     console.table(log)
@@ -159,9 +159,9 @@ const buyToken = async (bt: Token, ammId: string) => {
 
         const res = await swap(DEFAULT_TOKEN.WSOL, bt, ammId, BotConfig.tokenSwapAmount * LAMPORTS_PER_SOL);
         const log = {
-            'Signature': `https://solscan.io/tx/${res}`,
-            'Token Address': bt.mint.toString(),
-            'Spent': `${BotConfig.tokenSwapAmount} SOL`
+            'Signature:': `https://solscan.io/tx/${res}`,
+            'Token Address:': bt.mint.toString(),
+            'Spent:': `${BotConfig.tokenSwapAmount} SOL`
         }
         console.log(`\n# Bought new token`)
         console.table(log)
@@ -190,9 +190,9 @@ const sellToken = async (bt: Token, ammId: string) => {
             if (Number(bal) > 1000) {
                 const res = await swap(bt, DEFAULT_TOKEN.WSOL, ammId, Number(bal));
                 const log = {
-                    'Signature': `https://solscan.io/tx/${res}`,
-                    'Token Address': bt.mint.toString(),
-                    'Amount': Number(bal).toString()
+                    'Signature:': `https://solscan.io/tx/${res}`,
+                    'Token Address:': bt.mint.toString(),
+                    'Amount:': Number(bal).toString()
                 }
                 console.log(`\n# Sold token`)
                 console.table(log)
