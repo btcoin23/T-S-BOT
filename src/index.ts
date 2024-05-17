@@ -7,16 +7,16 @@ import { getWalletTokenAccount } from './util';
 import { getPrice } from "./getPrice";
 
 const moniterWallet = async () => {
-    
+
     let curWallet: PublicKey = new PublicKey(BotConfig.trackWallet);
     let curState: string = "None";
     let curAmmId: string;
     let curToken: Token;
     let initialPrice: number;
-    
+
     let signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 1 });
     let lastSignature = signatureInfo[0].signature;
-    
+
     console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
     setInterval(async () => {
         try {
@@ -133,7 +133,6 @@ const moniterWallet = async () => {
                 });
             }
 
-
             if (curToken && curState === "Bought") {
                 const walletInfs = await getWalletTokenAccount(connection, wallet.publicKey);
                 const one = walletInfs.find(i => i.accountInfo.mint.toString() === curToken.mint.toString());
@@ -155,53 +154,62 @@ const moniterWallet = async () => {
 }
 
 const buyToken = async (bt: Token, ammId: string) => {
-    const res = await swap(DEFAULT_TOKEN.WSOL, bt, ammId, BotConfig.tokenSwapAmount * LAMPORTS_PER_SOL);
-    const log = {
-        'Signature': `https://solscan.io/tx/${res}`,
-        'Token Address': bt.mint,
-        'Spent': `${BotConfig.tokenSwapAmount} Sol`
-    }
-    console.log(`\n# Bought new token`)
-    console.table(log)
-    const checkTxRes = setInterval(async () => {
-        const state = await connection.getSignatureStatus(res, { searchTransactionHistory: true });
-        if (state && state.value) {
-            if (state.value.err) {
-                buyToken(bt, ammId)
-            }
-            else
-                clearInterval(checkTxRes)
+    try {
+
+        const res = await swap(DEFAULT_TOKEN.WSOL, bt, ammId, BotConfig.tokenSwapAmount * LAMPORTS_PER_SOL);
+        const log = {
+            'Signature': `https://solscan.io/tx/${res}`,
+            'Token Address': bt.mint,
+            'Spent': `${BotConfig.tokenSwapAmount} Sol`
         }
-    }, BotConfig.intervalTime)
+        console.log(`\n# Bought new token`)
+        console.table(log)
+        const checkTxRes = setInterval(async () => {
+            const state = await connection.getSignatureStatus(res, { searchTransactionHistory: true });
+            if (state && state.value) {
+                if (state.value.err) {
+                    buyToken(bt, ammId)
+                }
+                else
+                    clearInterval(checkTxRes)
+            }
+        }, BotConfig.intervalTime)
+    } catch (e) {
+        console.log(`\n# Error while trying to buy token: ${bt.mint}`)
+    }
 }
 
 const sellToken = async (bt: Token, ammId: string) => {
-    const walletInfs = await getWalletTokenAccount(connection, wallet.publicKey);
-    const one = walletInfs.find(i => i.accountInfo.mint.toString() === bt.mint.toString());
-    if (one) {
-        const bal = one.accountInfo.amount
-        if (Number(bal) > 1000) {
-            const res = await swap(bt, DEFAULT_TOKEN.WSOL, ammId, Number(bal));
-            const log = {
-                'Signature': `https://solscan.io/tx/${res}`,
-                'Token Address': bt.mint,
-                'Amount': bal
-            }
-            console.log(`\n# Sold token`)
-            console.table(log)
+    try {
 
-            const checkTxRes = setInterval(async () => {
-                const state = await connection.getSignatureStatus(res, { searchTransactionHistory: true });
-                if (state && state.value) {
-                    if (state.value.err)
-                        sellToken(bt, ammId)
-                    else
-                        clearInterval(checkTxRes)
+        const walletInfs = await getWalletTokenAccount(connection, wallet.publicKey);
+        const one = walletInfs.find(i => i.accountInfo.mint.toString() === bt.mint.toString());
+        if (one) {
+            const bal = one.accountInfo.amount
+            if (Number(bal) > 1000) {
+                const res = await swap(bt, DEFAULT_TOKEN.WSOL, ammId, Number(bal));
+                const log = {
+                    'Signature': `https://solscan.io/tx/${res}`,
+                    'Token Address': bt.mint,
+                    'Amount': bal
                 }
-            }, BotConfig.intervalTime)
-        }
-    }
+                console.log(`\n# Sold token`)
+                console.table(log)
 
+                const checkTxRes = setInterval(async () => {
+                    const state = await connection.getSignatureStatus(res, { searchTransactionHistory: true });
+                    if (state && state.value) {
+                        if (state.value.err)
+                            sellToken(bt, ammId)
+                        else
+                            clearInterval(checkTxRes)
+                    }
+                }, BotConfig.intervalTime)
+            }
+        }
+    } catch (e) {
+        console.log(`\n# Error while trying to sell token: ${bt.mint}`)
+    }
 }
 
 moniterWallet();
