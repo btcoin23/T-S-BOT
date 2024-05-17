@@ -111,9 +111,9 @@ const moniterWallet = async () => {
                                     initialPrice = pcAmount / (coinAmount * (10 ** (quoteDecimal - baseDecimal)))
                                     const log = {
                                         'Signature': `https://solscan.io/tx/${tx.transaction.signatures}`,
-                                        'AMMID': ammid,
-                                        'Base Mint': baseToken,
-                                        'Quote Mint': quoteToken,
+                                        'AMMID': ammid.toString(),
+                                        'Base Mint': baseToken.toString(),
+                                        'Quote Mint': quoteToken.toString(),
                                         'Base Decimal': baseDecimal,
                                         'Quote Decimal': quoteDecimal,
                                         'Starting Price': initialPrice,
@@ -159,7 +159,7 @@ const buyToken = async (bt: Token, ammId: string) => {
         const res = await swap(DEFAULT_TOKEN.WSOL, bt, ammId, BotConfig.tokenSwapAmount * LAMPORTS_PER_SOL);
         const log = {
             'Signature': `https://solscan.io/tx/${res}`,
-            'Token Address': bt.mint,
+            'Token Address': bt.mint.toString(),
             'Spent': `${BotConfig.tokenSwapAmount} Sol`
         }
         console.log(`\n# Bought new token`)
@@ -190,8 +190,8 @@ const sellToken = async (bt: Token, ammId: string) => {
                 const res = await swap(bt, DEFAULT_TOKEN.WSOL, ammId, Number(bal));
                 const log = {
                     'Signature': `https://solscan.io/tx/${res}`,
-                    'Token Address': bt.mint,
-                    'Amount': bal
+                    'Token Address': bt.mint.toString(),
+                    'Amount': Number(bal).toString()
                 }
                 console.log(`\n# Sold token`)
                 console.table(log)

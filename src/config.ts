@@ -5,13 +5,13 @@ import 'dotenv/config';
 
 //---------------------------------------------------------------- User setting
 export const BotConfig = {
-    trackWallet: 'N22uCb2j9GriychZJzh9t5idaddLdkHhANNH27GUPYC',
+    trackWallet: '9Yo1yw85Ypj3NUY6pkULcfjHXDNxL9cUYA8S2w5ZvgyZ',
         // 'N22uCb2j9GriychZJzh9t5idaddLdkHhANNH27GUPYC',
         // 'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
     threshold: 1000,// 1000 SOL
     takeProfit: 1.2,// 30% Profit
     tokenSwapAmount: 0.01,// 0.5 Sol
-    intervalTime: 1000 * 2,
+    intervalTime: 1000,
     maxLamports: 5000000,
 };
 
