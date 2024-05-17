@@ -61,7 +61,7 @@ const moniterWallet = async () => {
                             )
                             if (isMinted) {
                                 const tokenMint: string = isMinted.parsed.info.mint;
-                                if(curToken.mint.toString() === tokenMint) return
+                                if(curToken?.mint?.toString() === tokenMint) return
                                 const amount: number = isMinted.parsed.info.amount;
                                 const tokenMintInfo = await getMint(connection, new PublicKey(tokenMint));
                                 const decimal: number = tokenMintInfo.decimals

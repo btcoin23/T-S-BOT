@@ -28,26 +28,26 @@ export const checkTxResult = async (sig: string) => {
 
 //websokect
 
-const test = (id: number) => {
-    console.log(id)
-    let ACCOUNT_TO_WATCH = new PublicKey('3LGt65CAjNcgw3ZkAsSj9miop5SW5YfjaJb2aRJ7EycK');
-    const subscriptionId = connection.onLogs(
-        ACCOUNT_TO_WATCH,
-        ({logs, signature}) =>{
-            if(logs){
-                setTimeout(() => {
-                    ACCOUNT_TO_WATCH = new PublicKey('5PXxuZkvftsg5CAGjv5LL5tEtvBRskdx1AAjxw8hK2Qx')
-                    console.log(`---Event Notification for ${ACCOUNT_TO_WATCH.toString()}--- \nNew Account Balance:`, signature)
-                    test(subscriptionId);
-                    // connection.removeOnLogsListener(subscriptionId) 
-                }, 1000);
-            }
-        },
-        "finalized"
-    );
-    console.log('Starting web socket, subscription ID: ', subscriptionId);
-    // await sleep(10000); //Wait 10 seconds for Socket Testing
-    // solanaConnection.removeAccountChangeListener(subscriptionId);
-}
+// const test = (id: number) => {
+//     console.log(id)
+//     let ACCOUNT_TO_WATCH = new PublicKey('3LGt65CAjNcgw3ZkAsSj9miop5SW5YfjaJb2aRJ7EycK');
+//     const subscriptionId = connection.onLogs(
+//         ACCOUNT_TO_WATCH,
+//         ({logs, signature}) =>{
+//             if(logs){
+//                 setTimeout(() => {
+//                     ACCOUNT_TO_WATCH = new PublicKey('5PXxuZkvftsg5CAGjv5LL5tEtvBRskdx1AAjxw8hK2Qx')
+//                     console.log(`---Event Notification for ${ACCOUNT_TO_WATCH.toString()}--- \nNew Account Balance:`, signature)
+//                     test(subscriptionId);
+//                     // connection.removeOnLogsListener(subscriptionId) 
+//                 }, 1000);
+//             }
+//         },
+//         "finalized"
+//     );
+//     console.log('Starting web socket, subscription ID: ', subscriptionId);
+//     // await sleep(10000); //Wait 10 seconds for Socket Testing
+//     // solanaConnection.removeAccountChangeListener(subscriptionId);
+// }
 
-test(0)
+// test(0)
