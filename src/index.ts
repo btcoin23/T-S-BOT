@@ -5,7 +5,6 @@ import { swap } from './swapAmm';
 import { connection, wallet, BotConfig, RAYDIUM_PUBLIC_KEY, DEFAULT_TOKEN } from './config';
 import { getWalletTokenAccount } from './util';
 import { getPrice } from "./getPrice";
-import { time } from "console";
 
 const moniterWallet = async () => {
 
@@ -39,19 +38,20 @@ const moniterWallet = async () => {
                             if (txAmount <= -BotConfig.threshold * LAMPORTS_PER_SOL) {
                                 const sender = tx.transaction.message.accountKeys[0].pubkey.toString();
                                 const recipient = tx.transaction.message.accountKeys[1].pubkey.toString();
-                                const log = {
-                                    'Signature': `https://solscan.io/tx/${tx.transaction.signatures}`,
-                                    'From': sender,
-                                    'to': recipient,
-                                    'Amount': `${-txAmount / LAMPORTS_PER_SOL} SOL`
-                                }
-                                console.log(`\n# Detected over ${BotConfig.threshold} Sol transferring`)
-                                console.table(log)
+
                                 if (recipient !== curWallet.toString()) {
                                     curState = "None"
                                     curWallet = new PublicKey(recipient)
                                     signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 1 });
                                     lastSignature = signatureInfo[0].signature;
+                                    const log = {
+                                        'Signature': `https://solscan.io/tx/${tx.transaction.signatures}`,
+                                        'From': sender,
+                                        'to': recipient,
+                                        'Amount': `${-txAmount / LAMPORTS_PER_SOL} SOL`
+                                    }
+                                    console.log(`\n# Detected over ${BotConfig.threshold} Sol transferring`)
+                                    console.table(log)
                                     console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
                                 }
                             }
@@ -61,6 +61,7 @@ const moniterWallet = async () => {
                             )
                             if (isMinted) {
                                 const tokenMint: string = isMinted.parsed.info.mint;
+                                if(curToken.mint.toString() === tokenMint) return
                                 const amount: number = isMinted.parsed.info.amount;
                                 const tokenMintInfo = await getMint(connection, new PublicKey(tokenMint));
                                 const decimal: number = tokenMintInfo.decimals
@@ -82,6 +83,7 @@ const moniterWallet = async () => {
                                 if (interactRaydium && createdPool) {
 
                                     const ammid = interactRaydium.accounts[4]
+                                    if(curAmmId === ammid.toString()) return
                                     const baseToken = interactRaydium.accounts[8]
                                     const quoteToken = interactRaydium.accounts[9]
 
@@ -138,7 +140,7 @@ const moniterWallet = async () => {
                     const curPrice = await getPrice(curToken.mint.toString());
                     if (curPrice) {
                         console.log(`* TakeProfit of Token ${curToken.mint.toString()}: ${curPrice * 100 / initialPrice} %`);
-                        if (curPrice >= initialPrice * BotConfig.takeProfit) {
+                        if (curPrice >= initialPrice * BotConfig.takeProfit || curPrice < initialPrice) {
                             curState = "Sold"
                             sellToken(curToken, curAmmId)
                         }

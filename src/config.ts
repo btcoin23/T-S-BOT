@@ -5,17 +5,16 @@ import 'dotenv/config';
 
 //---------------------------------------------------------------- User setting
 export const BotConfig = {
-    trackWallet: '7Boim1DiunSYLjTuYr52Z5Mf2us7iFz4uQ7adkqtQdLU',
+    trackWallet: 'H3AQEGwhLpCymdjtNfFTme3cVpP1tTqyEqNFADRUh8ij',
         // 'N22uCb2j9GriychZJzh9t5idaddLdkHhANNH27GUPYC',
         // 'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
     threshold: 1000,// 1000 SOL
-    takeProfit: 1.2,// 30% Profit
+    takeProfit: 1.3,// 30% Profit
     tokenSwapAmount: 0.01,// 0.5 Sol
     intervalTime: 1000 * 1,
     maxLamports: 5000000,
 };
 
-// const WALLET_PRIVATE_KEY = '<Your Wallet Private Key>'; //chainge to your wallet private key
 const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY; //chainge to your wallet private key
 
 //---------------------------------------------------------------- Constant setting

@@ -1,4 +1,4 @@
-import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { PublicKey } from '@solana/web3.js'
 import { connection } from "./config";
 
 export const checkTxResult = async (sig: string) => {
