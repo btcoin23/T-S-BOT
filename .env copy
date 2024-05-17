@@ -1,5 +1,0 @@
-WALLET_PRIVATE_KEY='sdfsdfsdfsdfsdfsdfsdfsdfsfsdfsdfsdfsdfsdfsdfsdfsdfsdf'
-RPC_URL='https://mainnet.helius-rpc.com/?api-key=862ad7b7-85d0-42aa-9f78-db1e34dc241b'
-WSS_URL = 'wss://mainnet.helius-rpc.com/?api-key=862ad7b7-85d0-42aa-9f78-db1e34dc241b'
-QN_RPC_URL = 'https://white-neat-pool.solana-mainnet.quiknode.pro/cfe67fec23b12040'
-QN_WSS_URL = 'wss://white-neat-pool.solana-mainnet.quiknode.pro/cfe67fec23b12040'
