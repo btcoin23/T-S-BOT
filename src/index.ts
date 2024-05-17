@@ -139,7 +139,7 @@ const moniterWallet = async () => {
                 if (one) {
                     const curPrice = await getPrice(curToken.mint.toString());
                     if (curPrice) {
-                        console.log(`* TakeProfit of Token ${curToken.mint.toString()}: ${curPrice * 100 / initialPrice} %`);
+                        console.log(`* TakeProfit: ${curPrice * 100 / initialPrice} %`);
                         if (curPrice >= initialPrice * BotConfig.takeProfit || curPrice < initialPrice) {
                             curState = "Sold"
                             sellToken(curToken, curAmmId)
