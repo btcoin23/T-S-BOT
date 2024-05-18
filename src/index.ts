@@ -34,7 +34,7 @@ const init = async () => {
 const moniterWallet = async () => {
     try {
         let count = 0;
-        signatureInfo = await connection.getSignaturesForAddress(curWallet, { until: lastSignature }, "confirmed");
+        signatureInfo = await connection.getSignaturesForAddress(curWallet, { until: lastSignature }, "finalized");
         if (signatureInfo.length > 0 && lastSignature != signatureInfo[0].signature) {
             lastSignature = signatureInfo[0].signature;
             // console.log(lastSignature)
