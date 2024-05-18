@@ -52,10 +52,14 @@ const moniterWallet = async () => {
                         const recipient = tx.transaction.message.accountKeys[1].pubkey.toString();
 
                         if (recipient !== curWallet.toString()) {
+                            signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 10 });
+                            const sigs = signatureInfo.filter(sig => !sig.err).map(sig => sig?.signature);
+                            const txns = await connection.getParsedTransactions(sigs, { maxSupportedTransactionVersion: 0 });
+                            lastSignature = txns.find(tr => tr.transaction.message.accountKeys[0].pubkey.toString() === curWallet.toString()).transaction.signatures[0]
+                            console.log(`\n# Last transaction of new wallet: https://solscan.io/tx/${lastSignature}`)
+                            
                             curState = "None"
                             curWallet = new PublicKey(recipient)
-                            signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 1 });
-                            lastSignature = signatureInfo[0].signature;
                             const log = {
                                 'Signature:': `https://solscan.io/tx/${tx.transaction.signatures}`,
                                 'From:': sender,
@@ -134,9 +138,7 @@ const moniterWallet = async () => {
                                 'Base Decimal:': baseDecimal,
                                 'Quote Decimal:': quoteDecimal,
                                 'Starting Price:': `${initialPrice} SOL`,
-                            }
-
-                            
+                            }                         
                             
                             console.log('\n# New Pool is created')
                             console.table(log)

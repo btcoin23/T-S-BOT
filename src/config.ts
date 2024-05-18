@@ -9,7 +9,7 @@ export const BotConfig = {
         // 'N22uCb2j9GriychZJzh9t5idaddLdkHhANNH27GUPYC',
         // 'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
     threshold: 1000,// 1000 SOL
-    takeProfit: 1.4,// 30% Profit
+    takeProfit: 1.2,// 30% Profit
     loseProfit: 0.9,// 10% lose
     tokenSwapAmount: 0.001,// 0.5 Sol
     intervalTime: 1000 * 1,
