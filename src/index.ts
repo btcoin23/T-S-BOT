@@ -16,6 +16,7 @@ let curToken: Token;
 let initialPrice: number;
 
 let newTokenMint: string;
+let stoppingTime = 0;
 
 const main = async () => {
     await init()
@@ -32,6 +33,7 @@ const init = async () => {
 
 const moniterWallet = async () => {
     try {
+        let count = 0;
         signatureInfo = await connection.getSignaturesForAddress(curWallet, { until: lastSignature }, "confirmed");
         if (signatureInfo.length > 0 && lastSignature != signatureInfo[0].signature) {
             lastSignature = signatureInfo[0].signature;
@@ -64,6 +66,8 @@ const moniterWallet = async () => {
                             console.table(log)
                             console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
                         }
+                    }else if (txAmount <= - BotConfig.oneSol * LAMPORTS_PER_SOL) {
+                        count++;
                     }
                 } else {
                     const isMinted: any = tx.transaction.message.instructions.find((item: any) =>
@@ -144,6 +148,16 @@ const moniterWallet = async () => {
         }
 
         if (curToken && curState === "Bought") {
+            if (count < 1)
+                stoppingTime ++;
+            else
+                stoppingTime = 0;
+            if (stoppingTime > BotConfig.zeroTime) {
+                stoppingTime = 0;
+                console.log('\n# ------------------------ Warning: Much token will be minted and sold all of it -------------------------')
+                // sellToken(curToken, curAmmId)
+            }
+            
             const walletInfs = await getWalletTokenAccount(connection, wallet.publicKey);
             const one = walletInfs.find(i => i.accountInfo.mint.toString() === curToken.mint.toString());
             if (one) {
