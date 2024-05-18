@@ -80,11 +80,13 @@ const moniterWallet = async () => {
                         const amount: number = isMinted.parsed.info.amount;
                         const tokenMintInfo = await getMint(connection, new PublicKey(tokenMint));
                         const decimal: number = tokenMintInfo.decimals
+                        const frozenToken: boolean = tokenMintInfo.freezeAuthority == null ? true: false;
                         const log = {
                             'Signature:': `https://solscan.io/tx/${tx.transaction.signatures}`,
                             'Token Mint:': tokenMint,
                             'Decimal:': decimal,
                             'Amount:': amount,
+                            'Frozen:': frozenToken
                         }
                         console.log('\n# New token is minted')
                         console.table(log)
@@ -133,13 +135,20 @@ const moniterWallet = async () => {
                                 'Quote Decimal:': quoteDecimal,
                                 'Starting Price:': `${initialPrice} SOL`,
                             }
+
+                            
+                            
                             console.log('\n# New Pool is created')
                             console.table(log)
-                            curToken = new Token(TOKEN_PROGRAM_ID, baseToken, baseDecimal)
-                            curAmmId = ammid.toString()
-                            if (curState === "None") {
-                                buyToken(curToken, curAmmId)
-                                curState = "Bought"
+                            const frozenToken: boolean = baseTokenInfo.freezeAuthority == null ? true: false;
+                            console.log(`\n# Current token's Freeze Authority disabled state: ${frozenToken}`)
+                            if(frozenToken === BotConfig.onlyFrozenToken){
+                                curToken = new Token(TOKEN_PROGRAM_ID, baseToken, baseDecimal)
+                                curAmmId = ammid.toString()
+                                if (curState === "None") {
+                                    buyToken(curToken, curAmmId)
+                                    curState = "Bought"
+                                }
                             }
                         }
                     }
