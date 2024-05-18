@@ -13,7 +13,7 @@ export const BotConfig = {
     loseProfit: 0.9,// 10% lose
     tokenSwapAmount: 0.001,// 0.5 Sol
     intervalTime: 1000 * 1,
-    maxLamports: 5000000,
+    maxLamports: 1000000,
 };
 
 //---------------------------------------------------------------- Constant setting
