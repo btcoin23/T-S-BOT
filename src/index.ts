@@ -21,7 +21,6 @@ let curTime: number = 0;
 let maxDuration: number = 0;
 
 let newTokenMint: string;
-let stoppingTime = 0;
 
 const opt = {
     format: "TakeProfit: {percentage}% | ETA: {eta}s | {value}/{total}",
@@ -43,11 +42,11 @@ const init = async () => {
     signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 1 });
     lastSignature = signatureInfo[0].signature;
     curState = "None"
+    curTime = Date.now();
 }
 
 const moniterWallet = async () => {
     try {
-        let count = 0;
         signatureInfo = await connection.getSignaturesForAddress(curWallet, { until: lastSignature }, "finalized");
         if (signatureInfo.length > 0 && lastSignature != signatureInfo[0].signature) {
             lastSignature = signatureInfo[0].signature;
@@ -90,8 +89,6 @@ const moniterWallet = async () => {
                             console.table(log)
                             console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
                         }
-                    } else if (txAmount <= - BotConfig.oneSol * LAMPORTS_PER_SOL) {
-                        count++;
                     }
                 } else {
                     const isMinted: any = tx.transaction.message.instructions.find((item: any) =>
@@ -176,26 +173,19 @@ const moniterWallet = async () => {
                         }
                     }
                 }
+                // if (curToken && curState === "Bought") {
 
-                const t = (tx.blockTime - curTime) / 1000
-                if (t > 1.0) {
-                    console.log(`\n# It seems the stopping time now! Delay: ${t}s / ${maxDuration}s`)
-                    progressBar.stop()
-                    // sellToken(curToken, curAmmId)
-                }
+                    const t = (tx.blockTime - curTime) / 1000
+                    if (t > 1.0) {
+                        console.log(`\n# It seems the stopping time now! Delay: ${t}s / ${maxDuration}s`)
+                        // progressBar.stop()
+                        // sellToken(curToken, curAmmId)
+                    }
+                // }
             });
         }
 
         if (curToken && curState === "Bought") {
-            if (count < 1)
-                stoppingTime++;
-            else
-                stoppingTime = 0;
-            if (stoppingTime > BotConfig.zeroTime) {
-                stoppingTime = 0;
-                console.log(`\n# ------------------------ Warning: Much token will be minted and sold all of it https://solscan.io/tx/${lastSignature} -------------------------`)
-                // sellToken(curToken, curAmmId)
-            }
 
             const walletInfs = await getWalletTokenAccount(connection, wallet.publicKey);
             const one = walletInfs.find(i => i.accountInfo.mint.toString() === curToken.mint.toString());
