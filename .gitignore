@@ -38,7 +38,7 @@ bower_components
 # Compiled binary addons (https://nodejs.org/api/addons.html)
 build/Release
 build/
-src/active.js
+src/checkFreezeAuthority.ts
 src/test.ts
 src/checkTxResult.ts
 # Dependency directories

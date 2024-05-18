@@ -1,5 +1,5 @@
-import { TOKEN_PROGRAM_ID, Token } from "@raydium-io/raydium-sdk";
 import { PublicKey, LAMPORTS_PER_SOL, PartiallyDecodedInstruction, ConfirmedSignatureInfo } from '@solana/web3.js'
+import { TOKEN_PROGRAM_ID, Token } from "@raydium-io/raydium-sdk";
 import { getMint } from '@solana/spl-token';
 import { swap } from './swapAmm';
 import { connection, wallet, BotConfig, RAYDIUM_PUBLIC_KEY, DEFAULT_TOKEN } from './config';
@@ -75,7 +75,7 @@ const moniterWallet = async () => {
                     )
                     if (isMinted) {
                         const tokenMint: string = isMinted.parsed.info.mint;
-                        if(tokenMint ==  newTokenMint) return
+                        if(tokenMint ===  newTokenMint) return
                         newTokenMint = tokenMint;
                         const amount: number = isMinted.parsed.info.amount;
                         const tokenMintInfo = await getMint(connection, new PublicKey(tokenMint));
