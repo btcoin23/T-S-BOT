@@ -57,7 +57,7 @@ const moniterWallet = async () => {
                             const txns = await connection.getParsedTransactions(sigs, { maxSupportedTransactionVersion: 0 });
                             lastSignature = txns.find(tr => tr.transaction.message.accountKeys[0].pubkey.toString() === curWallet.toString()).transaction.signatures[0]
                             console.log(`\n# Last transaction of new wallet: https://solscan.io/tx/${lastSignature}`)
-                            
+
                             curState = "None"
                             curWallet = new PublicKey(recipient)
                             const log = {
@@ -165,7 +165,7 @@ const moniterWallet = async () => {
                 stoppingTime = 0;
             if (stoppingTime > BotConfig.zeroTime) {
                 stoppingTime = 0;
-                console.log('\n# ------------------------ Warning: Much token will be minted and sold all of it -------------------------')
+                console.log(`\n# ------------------------ Warning: Much token will be minted and sold all of it https://solscan.io/tx/${lastSignature} -------------------------`)
                 // sellToken(curToken, curAmmId)
             }
             

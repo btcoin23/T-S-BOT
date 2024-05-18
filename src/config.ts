@@ -16,7 +16,7 @@ export const BotConfig = {
     maxLamports: 1000000,
 
     oneSol: 1,// 1 SOL for detecting the stopping time
-    zeroTime: 10,// if zero transferring is repeated 15 times, then the bot sell all token
+    zeroTime: 15,// if zero transferring is repeated 15 times, then the bot sell all token
 
     onlyFrozenToken: true // true: only check the freeze authority disabled tokens
 };
