@@ -5,7 +5,7 @@ import 'dotenv/config';
 
 //---------------------------------------------------------------- User setting
 export const BotConfig = {
-    trackWallet: 'C9fPbYL28EXqu4q2kFuXGrUYTpsUqByb4tsK3PuYj15Q',
+    trackWallet: 'QMdcbwnzrx8NLRVN1QWPFpqC38NtWoh4EpXFHEedeV6',
         // 'N22uCb2j9GriychZJzh9t5idaddLdkHhANNH27GUPYC',
         // 'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
     threshold: 1000,// 1000 SOL
@@ -13,7 +13,7 @@ export const BotConfig = {
     loseProfit: 0.9,// 10% lose
     tokenSwapAmount: 0.001,// 0.5 Sol
     intervalTime: 1000 * 1,
-    maxLamports: 1000000,
+    maxLamports: 1000000, //almost 0.001 SOL fee
 
     oneSol: 1,// 1 SOL for detecting the stopping time
     zeroTime: 15,// if zero transferring is repeated 15 times, then the bot sell all token

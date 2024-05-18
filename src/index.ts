@@ -5,6 +5,8 @@ import { swap } from './swapAmm';
 import { connection, wallet, BotConfig, RAYDIUM_PUBLIC_KEY, DEFAULT_TOKEN } from './config';
 import { getWalletTokenAccount } from './util';
 import { getPrice } from "./getPrice";
+import { SingleBar, Presets } from "cli-progress";
+
 
 let signatureInfo: ConfirmedSignatureInfo[];
 let lastSignature: string;
@@ -15,8 +17,20 @@ let curAmmId: string;
 let curToken: Token;
 let initialPrice: number;
 
+let curTime: number = 0;
+let maxDuration: number = 0;
+
 let newTokenMint: string;
 let stoppingTime = 0;
+
+const opt = {
+    format: "TakeProfit: {percentage}% | ETA: {eta}s | {value}/{total}",
+};
+const progressBar = new SingleBar(
+    opt,
+    Presets.shades_classic
+);
+
 
 const main = async () => {
     await init()
@@ -50,7 +64,13 @@ const moniterWallet = async () => {
                     if (txAmount <= -BotConfig.threshold * LAMPORTS_PER_SOL) {
                         const sender = tx.transaction.message.accountKeys[0].pubkey.toString();
                         const recipient = tx.transaction.message.accountKeys[1].pubkey.toString();
-
+                        if (sender === curWallet.toString()) {
+                            const duration = (tx.blockTime - curTime) / 1000;
+                            curTime = tx.blockTime
+                            if (duration > maxDuration)
+                                maxDuration = duration
+                            // console.log(duration + ' / ' + maxDuration)
+                        }
                         if (recipient !== curWallet.toString()) {
                             signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 10 });
                             const sigs = signatureInfo.filter(sig => !sig.err).map(sig => sig?.signature);
@@ -70,7 +90,7 @@ const moniterWallet = async () => {
                             console.table(log)
                             console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
                         }
-                    }else if (txAmount <= - BotConfig.oneSol * LAMPORTS_PER_SOL) {
+                    } else if (txAmount <= - BotConfig.oneSol * LAMPORTS_PER_SOL) {
                         count++;
                     }
                 } else {
@@ -79,12 +99,12 @@ const moniterWallet = async () => {
                     )
                     if (isMinted) {
                         const tokenMint: string = isMinted.parsed.info.mint;
-                        if(tokenMint ===  newTokenMint) return
+                        if (tokenMint === newTokenMint) return
                         newTokenMint = tokenMint;
                         const amount: number = isMinted.parsed.info.amount;
                         const tokenMintInfo = await getMint(connection, new PublicKey(tokenMint));
                         const decimal: number = tokenMintInfo.decimals
-                        const frozenToken: boolean = tokenMintInfo.freezeAuthority == null ? true: false;
+                        const frozenToken: boolean = tokenMintInfo.freezeAuthority == null ? true : false;
                         const log = {
                             'Signature:': `https://solscan.io/tx/${tx.transaction.signatures}`,
                             'Token Mint:': tokenMint,
@@ -138,29 +158,37 @@ const moniterWallet = async () => {
                                 'Base Decimal:': baseDecimal,
                                 'Quote Decimal:': quoteDecimal,
                                 'Starting Price:': `${initialPrice} SOL`,
-                            }                         
-                            
+                            }
+
                             console.log('\n# New Pool is created')
                             console.table(log)
-                            const frozenToken: boolean = baseTokenInfo.freezeAuthority == null ? true: false;
+                            const frozenToken: boolean = baseTokenInfo.freezeAuthority == null ? true : false;
                             console.log(`\n# Current token's Freeze Authority disabled state: ${frozenToken}`)
-                            if(frozenToken === BotConfig.onlyFrozenToken){
+                            if (frozenToken === BotConfig.onlyFrozenToken) {
                                 curToken = new Token(TOKEN_PROGRAM_ID, baseToken, baseDecimal)
                                 curAmmId = ammid.toString()
                                 if (curState === "None") {
                                     buyToken(curToken, curAmmId)
                                     curState = "Bought"
+                                    progressBar.start(initialPrice * BotConfig.takeProfit, 0);
                                 }
                             }
                         }
                     }
+                }
+
+                const t = (tx.blockTime - curTime) / 1000
+                if (t > 1.0) {
+                    console.log(`\n# It seems the stopping time now! Delay: ${t}s / ${maxDuration}s`)
+                    progressBar.stop()
+                    // sellToken(curToken, curAmmId)
                 }
             });
         }
 
         if (curToken && curState === "Bought") {
             if (count < 1)
-                stoppingTime ++;
+                stoppingTime++;
             else
                 stoppingTime = 0;
             if (stoppingTime > BotConfig.zeroTime) {
@@ -168,15 +196,18 @@ const moniterWallet = async () => {
                 console.log(`\n# ------------------------ Warning: Much token will be minted and sold all of it https://solscan.io/tx/${lastSignature} -------------------------`)
                 // sellToken(curToken, curAmmId)
             }
-            
+
             const walletInfs = await getWalletTokenAccount(connection, wallet.publicKey);
             const one = walletInfs.find(i => i.accountInfo.mint.toString() === curToken.mint.toString());
             if (one) {
                 const curPrice = await getPrice(curToken.mint.toString());
                 if (curPrice) {
-                    console.log(`* TakeProfit: ${(curPrice * 100 / initialPrice).toFixed(3)} %`);
+                    // const curProfit = Number((curPrice * 100 / initialPrice).toFixed(3))
+                    // console.log(`* TakeProfit: ${curProfit} %`);
+                    progressBar.update(curPrice);
                     if (curPrice >= initialPrice * BotConfig.takeProfit || curPrice < initialPrice * BotConfig.loseProfit) {
                         curState = "Sold"
+                        progressBar.stop()
                         sellToken(curToken, curAmmId)
                     }
                 }
