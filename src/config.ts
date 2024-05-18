@@ -18,7 +18,7 @@ export const BotConfig = {
     oneSol: 1,// 1 SOL for detecting the stopping time
     zeroTime: 15,// if zero transferring is repeated 15 times, then the bot sell all token
 
-    onlyFrozenToken: true
+    onlyFrozenToken: true // true: only check the freeze authority disabled tokens
 };
 
 //---------------------------------------------------------------- Constant setting
