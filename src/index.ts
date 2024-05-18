@@ -18,6 +18,7 @@ let initialPrice: number;
 const main = async () => {
     await init()
     moniterWallet()
+    console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
 }
 
 const init = async () => {
@@ -28,7 +29,6 @@ const init = async () => {
 }
 
 const moniterWallet = async () => {
-    console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
     try {
         signatureInfo = await connection.getSignaturesForAddress(curWallet, { until: lastSignature }, "confirmed");
         if (signatureInfo.length > 0) {
