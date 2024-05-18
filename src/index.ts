@@ -60,18 +60,11 @@ const moniterWallet = async () => {
                 )
                 if (isTransferred) {
                     const txAmount = tx.meta.postBalances[0] - tx.meta.preBalances[0];
-                    if (txAmount <= -BotConfig.threshold * LAMPORTS_PER_SOL) {
-                        const sender = tx.transaction.message.accountKeys[0].pubkey.toString();
-                        const recipient = tx.transaction.message.accountKeys[1].pubkey.toString();
-                        if (sender === curWallet.toString()) {
-                            const duration = (tx.blockTime - curTime) / 1000;
-                            curTime = tx.blockTime
-                            if (duration > maxDuration)
-                                maxDuration = duration
-                            // console.log(duration + ' / ' + maxDuration)
-                        }
-                        if (recipient !== curWallet.toString()) {
-                            signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 10 });
+                    const sender = tx.transaction.message.accountKeys[0].pubkey.toString();
+                    const recipient = tx.transaction.message.accountKeys[1].pubkey.toString();
+                    if (sender === curWallet.toString()) {                      
+                        if (txAmount <= -BotConfig.threshold * LAMPORTS_PER_SOL) {
+                            signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 100 });
                             const sigs = signatureInfo.filter(sig => !sig.err).map(sig => sig?.signature);
                             const txns = await connection.getParsedTransactions(sigs, { maxSupportedTransactionVersion: 0 });
                             lastSignature = txns.find(tr => tr.transaction.message.accountKeys[0].pubkey.toString() === curWallet.toString()).transaction.signatures[0]
@@ -88,7 +81,14 @@ const moniterWallet = async () => {
                             console.log(`\n# Detected over ${BotConfig.threshold} Sol transferring`)
                             console.table(log)
                             console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
+                        }else if (txAmount <= -BotConfig.oneSol * LAMPORTS_PER_SOL) {
+                            const duration = (tx.blockTime - curTime) / 1000;
+                            curTime = tx.blockTime
+                            if (duration > maxDuration)
+                                maxDuration = duration
+                            console.log(duration + ' / ' + maxDuration)
                         }
+
                     }
                 } else {
                     const isMinted: any = tx.transaction.message.instructions.find((item: any) =>
