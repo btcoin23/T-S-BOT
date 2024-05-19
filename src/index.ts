@@ -228,9 +228,9 @@ const buyToken = async (bt: Token, ammId: string) => {
                     console.log(`\n# Sending a transaction again to buy the token: ${bt.mint}`)
                     buyToken(bt, ammId)
                 }
-                else
-                    setTimeout(checkTxRes, BotConfig.intervalTime);
             }
+            else
+                setTimeout(checkTxRes, BotConfig.intervalTime);
         }
     } catch (e) {
         console.log(`\n# Error while trying to buy token: ${bt.mint}, ${e}`)
@@ -262,9 +262,9 @@ const sellToken = async (bt: Token, ammId: string) => {
                             console.log(`\n# Sending a transaction again to sell the token: ${bt.mint}`)
                             sellToken(bt, ammId)
                         }
-                        else
-                            setTimeout(checkTxRes, BotConfig.intervalTime);
                     }
+                    else
+                        setTimeout(checkTxRes, BotConfig.intervalTime);
                 }
             }
         }
