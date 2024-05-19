@@ -81,12 +81,12 @@ const moniterWallet = async () => {
                             console.log(`\n# Detected over ${BotConfig.threshold} Sol transferring`)
                             console.table(log)
                             console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
-                        }else if (txAmount <= -BotConfig.oneSol * LAMPORTS_PER_SOL) {
+                        }else { // if (txAmount <= -BotConfig.oneSol * LAMPORTS_PER_SOL) {
                             const duration = (tx.blockTime - curTime) / 1000;
                             curTime = tx.blockTime
                             if (duration > maxDuration)
                                 maxDuration = duration
-                            console.log(duration + ' / ' + maxDuration)
+                            // console.log(duration + ' / ' + maxDuration)
                         }
 
                     }
@@ -165,9 +165,9 @@ const moniterWallet = async () => {
                                 curToken = new Token(TOKEN_PROGRAM_ID, baseToken, baseDecimal)
                                 curAmmId = ammid.toString()
                                 if (curState === "None") {
-                                    buyToken(curToken, curAmmId)
+                                    await buyToken(curToken, curAmmId)
                                     curState = "Bought"
-                                    progressBar.start(initialPrice * BotConfig.takeProfit, 0);
+                                    progressBar.start(initialPrice * 2, 0);
                                 }
                             }
                         }
@@ -176,7 +176,7 @@ const moniterWallet = async () => {
                 // if (curToken && curState === "Bought") {
 
                     const t = (tx.blockTime - curTime) / 1000
-                    if (t > 1.0) {
+                    if (t > 10.0) {
                         console.log(`\n# It seems the stopping time now! Delay: ${t}s / ${maxDuration}s`)
                         // progressBar.stop()
                         // sellToken(curToken, curAmmId)
@@ -232,6 +232,7 @@ const buyToken = async (bt: Token, ammId: string) => {
         }
     } catch (e) {
         console.log(`\n# Error while trying to buy token: ${bt.mint}, ${e}`)
+        curState = "None"
     }
 }
 
@@ -266,6 +267,7 @@ const sellToken = async (bt: Token, ammId: string) => {
         }
     } catch (e) {
         console.log(`\n# Error while trying to sell token: ${bt.mint}\n ${e}`)
+        curState = "None"
     }
 }
 
