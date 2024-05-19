@@ -176,7 +176,7 @@ const moniterWallet = async () => {
                 // if (curToken && curState === "Bought") {
 
                     const t = (tx.blockTime - curTime) / 1000
-                    if (t > 10.0) {
+                    if (t > 5.0) {
                         console.log(`\n# It seems the stopping time now! Delay: ${t}s / ${maxDuration}s`)
                         // progressBar.stop()
                         // sellToken(curToken, curAmmId)
