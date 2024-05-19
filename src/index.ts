@@ -217,11 +217,12 @@ const buyToken = async (bt: Token, ammId: string) => {
             'Token Address:': bt.mint.toString(),
             'Spent:': `${BotConfig.tokenSwapAmount} SOL`
         }
-        console.log(`\n# Bought new token`)
+        console.log(`\n# Buying new token`)
         console.table(log)
         const checkTxRes = async () => {
             const state = await connection.getSignatureStatus(res, { searchTransactionHistory: true });
             if (state && state.value) {
+                console.log(`\n# checking buying transaction result ${state}`)
                 if (state.value.err) {
                     console.log(`\n# Sending a transaction again to buy the token: ${bt.mint}`)
                     buyToken(bt, ammId)
@@ -249,12 +250,13 @@ const sellToken = async (bt: Token, ammId: string) => {
                     'Token Address:': bt.mint.toString(),
                     'Amount:': Number(bal).toString()
                 }
-                console.log(`\n# Sold token`)
+                console.log(`\n# Selling the token`)
                 console.table(log)
 
                 const checkTxRes = async () => {
                     const state = await connection.getSignatureStatus(res, { searchTransactionHistory: true });
                     if (state && state.value) {
+                        console.log(`\n# checking selling transaction result ${state}`)
                         if (state.value.err) {
                             console.log(`\n# Sending a transaction again to sell the token: ${bt.mint}`)
                             sellToken(bt, ammId)
