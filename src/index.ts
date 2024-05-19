@@ -177,7 +177,7 @@ const moniterWallet = async () => {
                 // if (curToken && curState === "Bought") {
 
                     const t = (tx.blockTime - curTime) / 1000
-                    if (t > 5.0) {
+                    if (t > 1.0) {
                         console.log(`\n# It seems the stopping time now! Delay: ${t}s / ${maxDuration}s`)
                         // progressBar.stop()
                         // sellToken(curToken, curAmmId)
@@ -222,8 +222,8 @@ const buyToken = async (bt: Token, ammId: string) => {
         console.table(log)
         const checkTxRes = async () => {
             const state = await connection.getSignatureStatus(res, { searchTransactionHistory: true });
+            console.log(`\n# checking buying transaction result ${state}`)
             if (state && state.value) {
-                console.log(`\n# checking buying transaction result ${state}`)
                 if (state.value.err) {
                     console.log(`\n# Sending a transaction again to buy the token: ${bt.mint}`)
                     buyToken(bt, ammId)
@@ -256,8 +256,8 @@ const sellToken = async (bt: Token, ammId: string) => {
 
                 const checkTxRes = async () => {
                     const state = await connection.getSignatureStatus(res, { searchTransactionHistory: true });
+                    console.log(`\n# checking selling transaction result ${state}`)
                     if (state && state.value) {
-                        console.log(`\n# checking selling transaction result ${state}`)
                         if (state.value.err) {
                             console.log(`\n# Sending a transaction again to sell the token: ${bt.mint}`)
                             sellToken(bt, ammId)
