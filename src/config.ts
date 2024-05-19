@@ -5,7 +5,7 @@ import 'dotenv/config';
 
 //---------------------------------------------------------------- User setting
 export const BotConfig = {
-    trackWallet: '5b4YJegDqHjrMajo6h4SkST3ozzvEDzCfKHHrZBCv5Bk',
+    trackWallet: '6qF1nvnYf7zc3kmohx5PbLCcnG7Q9zNuDDcm8qypbTqL',
         // 'N22uCb2j9GriychZJzh9t5idaddLdkHhANNH27GUPYC',
         // 'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
     threshold: 1000,// 1000 SOL
@@ -15,7 +15,7 @@ export const BotConfig = {
     intervalTime: 1000 * 1,
     maxLamports: 1000000, //almost 0.001 SOL fee
 
-    oneSol: 1,// 1 SOL for detecting the stopping time
+    oneSol: 0.1,// 1 SOL for detecting the stopping time
     zeroTime: 15,// if zero transferring is repeated 15 times, then the bot sell all token
 
     onlyFrozenToken: true // true: only check the freeze authority disabled tokens
