@@ -222,11 +222,13 @@ const buyToken = async (bt: Token, ammId: string) => {
         console.table(log)
         const checkTxRes = async () => {
             const state = await connection.getSignatureStatus(res, { searchTransactionHistory: true });
-            console.log(`\n# checking buying transaction result ${state}`)
+            // console.log(`# checking buying transaction result ${state.value}`)
             if (state && state.value) {
                 if (state.value.err) {
-                    console.log(`\n# Sending a transaction again to buy the token: ${bt.mint}`)
+                    console.log(`\n# Transaction failed! Sending a transaction again to buy the token: ${bt.mint}`)
                     buyToken(bt, ammId)
+                }else{
+                    console.log('\n# Transaction succeeded!')
                 }
             }
             else
@@ -257,11 +259,13 @@ const sellToken = async (bt: Token, ammId: string) => {
 
                 const checkTxRes = async () => {
                     const state = await connection.getSignatureStatus(res, { searchTransactionHistory: true });
-                    console.log(`\n# checking selling transaction result ${state}`)
+                    // console.log(`# checking selling transaction result ${state.value}`)
                     if (state && state.value) {
                         if (state.value.err) {
-                            console.log(`\n# Sending a transaction again to sell the token: ${bt.mint}`)
+                            console.log(`\n# Transaction failed! Sending a transaction again to sell the token: ${bt.mint}`)
                             sellToken(bt, ammId)
+                        }else{
+                            console.log('\n# Transaction succeeded!')
                         }
                     }
                     else
@@ -277,3 +281,5 @@ const sellToken = async (bt: Token, ammId: string) => {
 }
 
 main();
+
+// sellToken(new Token(TOKEN_PROGRAM_ID, new PublicKey('vxJhBCi6jpiZQjAxp8rN8MeAo2MRr63MvQsGQ4nUSzx'), 8), '3EfxTTYJvfEHEsZAtoAHgPVAT5iuwxKgfy4YPeAcGLzA')
