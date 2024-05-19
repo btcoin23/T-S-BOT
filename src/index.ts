@@ -86,7 +86,7 @@ const moniterWallet = async () => {
                             curTime = tx.blockTime
                             if (duration > maxDuration)
                                 maxDuration = duration
-                            if(duration > 1)
+                            if(duration > 0.1)
                                 console.log(duration + ' / ' + maxDuration)
                         }
 
@@ -232,6 +232,7 @@ const buyToken = async (bt: Token, ammId: string) => {
             else
                 setTimeout(checkTxRes, BotConfig.intervalTime);
         }
+        checkTxRes()
     } catch (e) {
         console.log(`\n# Error while trying to buy token: ${bt.mint}, ${e}`)
         curState = "None"
@@ -266,6 +267,7 @@ const sellToken = async (bt: Token, ammId: string) => {
                     else
                         setTimeout(checkTxRes, BotConfig.intervalTime);
                 }
+                checkTxRes()
             }
         }
     } catch (e) {
