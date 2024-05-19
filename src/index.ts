@@ -165,8 +165,8 @@ const moniterWallet = async () => {
                                 curToken = new Token(TOKEN_PROGRAM_ID, baseToken, baseDecimal)
                                 curAmmId = ammid.toString()
                                 if (curState === "None") {
-                                    await buyToken(curToken, curAmmId)
                                     curState = "Bought"
+                                    await buyToken(curToken, curAmmId)
                                     progressBar.start(initialPrice * 2, 0);
                                 }
                             }
