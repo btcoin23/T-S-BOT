@@ -86,7 +86,8 @@ const moniterWallet = async () => {
                             curTime = tx.blockTime
                             if (duration > maxDuration)
                                 maxDuration = duration
-                            // console.log(duration + ' / ' + maxDuration)
+                            if(duration > 1)
+                                console.log(duration + ' / ' + maxDuration)
                         }
 
                     }
@@ -167,7 +168,7 @@ const moniterWallet = async () => {
                                 if (curState === "None") {
                                     curState = "Bought"
                                     await buyToken(curToken, curAmmId)
-                                    progressBar.start(initialPrice * 2, 0);
+                                    progressBar.start(initialPrice, 0);
                                 }
                             }
                         }
@@ -194,7 +195,7 @@ const moniterWallet = async () => {
                 if (curPrice) {
                     // const curProfit = Number((curPrice * 100 / initialPrice).toFixed(3))
                     // console.log(`* TakeProfit: ${curProfit} %`);
-                    progressBar.update(curPrice);
+                    progressBar.update(curPrice - initialPrice);
                     if (curPrice >= initialPrice * BotConfig.takeProfit || curPrice < initialPrice * BotConfig.loseProfit) {
                         curState = "Sold"
                         progressBar.stop()
