@@ -5,7 +5,7 @@ import 'dotenv/config';
 
 //---------------------------------------------------------------- User setting
 export const BotConfig = {
-    trackWallet: 'HU9G2aDiYakU28NCFiarbDAdZcae6vVZD6UQKPRLx8or',
+    trackWallet: 'Bio5yeiavF1hh3mhLrMVGD5DpEWvR8ksvLm4UXRGM5rg',
         // 'N22uCb2j9GriychZJzh9t5idaddLdkHhANNH27GUPYC',
         // 'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
     threshold: 1000,// 1000 SOL
