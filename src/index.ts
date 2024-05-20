@@ -77,13 +77,11 @@ const moniterWallet = async () => {
                             console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
                         } else if (txAmount <= -BotConfig.oneSol * LAMPORTS_PER_SOL) {
                             if (curToken && isBought) {
-                                // curTime = curTime == 0 ? tx.blockTime : curTime
-                                // const duration = (tx.blockTime - curTime);
+                                const duration = (tx.blockTime - curTime);
+                                maxDuration = duration > maxDuration ? duration : maxDuration
+                                if (duration > 20)
+                                    console.log(duration + ' / ' + maxDuration)
                                 curTime = tx.blockTime
-                                // maxDuration = duration > maxDuration ? duration : maxDuration
-                                    // maxDuration = duration
-                                // if (duration > 20)
-                                    // console.log(duration + ' / ' + maxDuration)
                             }
                         }
 
@@ -163,8 +161,8 @@ const moniterWallet = async () => {
                                 curToken = new Token(TOKEN_PROGRAM_ID, baseToken, baseDecimal)
                                 curAmmId = ammid.toString()
                                 if (!isBought) {
-                                    isBought = true
                                     await buyToken(curToken, curAmmId)
+                                    isBought = true
                                     progressBar.start(initialPrice, 0);
                                 }
                             }
@@ -172,21 +170,19 @@ const moniterWallet = async () => {
                     }
                 }
                 if (curToken && isBought && curTime > 0) {
-
                     const t = (tx.blockTime - curTime)
                     if (t > BotConfig.stoppingTime) {
                         console.log(`\n# It seems the stopping time now! Delay: ${t}s / ${maxDuration}s at ${tx.blockTime}`)
-                        isBought = false
                         maxDuration = 0
                         progressBar.stop()
-                        sellToken(curToken, curAmmId)
+                        await sellToken(curToken, curAmmId)
+                        isBought = false
                     }
                 }
             });
         }
 
         if (curToken && isBought) {
-
             const walletInfs = await getWalletTokenAccount(connection, wallet.publicKey);
             const one = walletInfs.find(i => i.accountInfo.mint.toString() === curToken.mint.toString());
             if (one) {
@@ -194,10 +190,10 @@ const moniterWallet = async () => {
                 if (curPrice) {
                     progressBar.update(curPrice - initialPrice);
                     if (curPrice >= initialPrice * BotConfig.takeProfit || curPrice < initialPrice * BotConfig.loseProfit) {
-                        isBought = false
                         maxDuration = 0
                         progressBar.stop()
-                        sellToken(curToken, curAmmId)
+                        await sellToken(curToken, curAmmId)
+                        isBought = false
                     }
                 }
             }
