@@ -80,7 +80,7 @@ const moniterWallet = async () => {
                                 curTime = tx.blockTime
                                 if (duration > maxDuration)
                                     maxDuration = duration
-                                if (duration > 10)
+                                if (duration > 20)
                                     console.log(duration + ' / ' + maxDuration)
                             }
                         }
