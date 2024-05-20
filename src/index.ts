@@ -87,7 +87,7 @@ const moniterWallet = async () => {
                             curTime = tx.blockTime
                             if (duration > maxDuration)
                                 maxDuration = duration
-                            if(duration > 1)
+                            if(duration > 10)
                                 console.log(duration + ' / ' + maxDuration)
                         }
 
@@ -178,7 +178,7 @@ const moniterWallet = async () => {
                 // if (curToken && curState === "Bought") {
 
                     const t = (tx.blockTime - curTime)
-                    if (t > 10.0) {
+                    if (t > 30.0) {
                         curTime = tx.blockTime
                         console.log(`\n# It seems the stopping time now! Delay: ${t}s / ${maxDuration}s`)
                         // progressBar.stop()
