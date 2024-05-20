@@ -60,7 +60,7 @@ const moniterWallet = async () => {
                     const txAmount = tx.meta.postBalances[0] - tx.meta.preBalances[0];
                     const sender = tx.transaction.message.accountKeys[0].pubkey.toString();
                     const recipient = tx.transaction.message.accountKeys[1].pubkey.toString();
-                    if (sender === curWallet.toString()) {                      
+                    if (sender === curWallet.toString()) {
                         if (txAmount <= -BotConfig.threshold * LAMPORTS_PER_SOL) {
                             lastSignature = tx.transaction.signatures[0]
                             console.log(`\n# Last transaction of new wallet: https://solscan.io/tx/${lastSignature}`)
@@ -74,13 +74,13 @@ const moniterWallet = async () => {
                             console.log(`\n# Detected over ${BotConfig.threshold} Sol transferring`)
                             console.table(log)
                             console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
-                        }else if (txAmount <= -BotConfig.oneSol * LAMPORTS_PER_SOL) {
-                            if(curToken && isBought){
+                        } else if (txAmount <= -BotConfig.oneSol * LAMPORTS_PER_SOL) {
+                            if (curToken && isBought) {
                                 const duration = (tx.blockTime - curTime);
                                 curTime = tx.blockTime
                                 if (duration > maxDuration)
                                     maxDuration = duration
-                                if(duration > 10)
+                                if (duration > 10)
                                     console.log(duration + ' / ' + maxDuration)
                             }
                         }
@@ -163,22 +163,24 @@ const moniterWallet = async () => {
                                 if (!isBought) {
                                     isBought = true
                                     await buyToken(curToken, curAmmId)
+                                    curTime = tx.blockTime
                                     progressBar.start(initialPrice, 0);
                                 }
                             }
                         }
                     }
                 }
-                // if (curToken && curState === "Bought") {
+                if (curToken && isBought) {
 
                     const t = (tx.blockTime - curTime)
                     if (t > BotConfig.stoppingTime) {
                         console.log(`\n# It seems the stopping time now! Delay: ${t}s / ${maxDuration}s at ${tx.blockTime}`)
                         isBought = false
+                        maxDuration = 0
                         progressBar.stop()
                         sellToken(curToken, curAmmId)
                     }
-                // }
+                }
             });
         }
 
@@ -192,6 +194,7 @@ const moniterWallet = async () => {
                     progressBar.update(curPrice - initialPrice);
                     if (curPrice >= initialPrice * BotConfig.takeProfit || curPrice < initialPrice * BotConfig.loseProfit) {
                         isBought = false
+                        maxDuration = 0
                         progressBar.stop()
                         sellToken(curToken, curAmmId)
                     }
@@ -221,7 +224,7 @@ const buyToken = async (bt: Token, ammId: string) => {
                 if (state.value.err) {
                     console.log(`\n# Transaction failed! Sending a transaction again to buy the token: ${bt.mint}`)
                     buyToken(bt, ammId)
-                }else{
+                } else {
                     console.log('\n# Transaction succeeded!')
                 }
             }
@@ -231,7 +234,7 @@ const buyToken = async (bt: Token, ammId: string) => {
         checkTxRes()
     } catch (e) {
         console.log(`\n# Error while trying to buy token: ${bt.mint}, ${e}`)
-        isBought = false
+        buyToken(bt, ammId)
     }
 }
 
@@ -258,7 +261,7 @@ const sellToken = async (bt: Token, ammId: string) => {
                         if (state.value.err) {
                             console.log(`\n# Transaction failed! Sending a transaction again to sell the token: ${bt.mint}`)
                             sellToken(bt, ammId)
-                        }else{
+                        } else {
                             console.log('\n# Transaction succeeded!')
                         }
                     }
@@ -270,7 +273,7 @@ const sellToken = async (bt: Token, ammId: string) => {
         }
     } catch (e) {
         console.log(`\n# Error while trying to sell token: ${bt.mint}\n ${e}`)
-        isBought = true
+        sellToken(bt, ammId)
     }
 }
 
