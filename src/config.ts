@@ -5,18 +5,18 @@ import 'dotenv/config';
 
 //---------------------------------------------------------------- User setting
 export const BotConfig = {
-    trackWallet: 'Cjrqi4aHH29HYA45Kq8GcT2BU9k34fQ5Fs4KmjncKfMk',
+    trackWallet: 'D7aMoJkfo1ZHXg252TNdQ3pPd4omccEWsfyzea5m6CE8',
         // 'N22uCb2j9GriychZJzh9t5idaddLdkHhANNH27GUPYC',
         // 'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
     threshold: 1000,// 1000 SOL
-    takeProfit: 1.2,// 30% Profit
+    takeProfit: 2.5,// 30% Profit
     loseProfit: 0.9,// 10% lose
     tokenSwapAmount: 0.001,// 0.5 Sol
     intervalTime: 1000 * 1,
     maxLamports: 1000000, //almost 0.001 SOL fee
 
     oneSol: 0.1,// 1 SOL for detecting the stopping time
-    zeroTime: 15,// if zero transferring is repeated 15 times, then the bot sell all token
+    stoppingTime: 30,// if zero transferring is repeated 15 times, then the bot sell all token
 
     onlyFrozenToken: true // true: only check the freeze authority disabled tokens
 };

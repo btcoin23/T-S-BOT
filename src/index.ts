@@ -11,15 +11,13 @@ import { SingleBar, Presets } from "cli-progress";
 let signatureInfo: ConfirmedSignatureInfo[];
 let lastSignature: string;
 
-let curWallet: PublicKey;
-let curState: string;
-let curAmmId: string;
-let curToken: Token;
+let isBought: boolean;
 let initialPrice: number;
-
+let curWallet: PublicKey;
+let curToken: Token;
+let curAmmId: string;
 let curTime: number = 0;
 let maxDuration: number = 0;
-
 let newTokenMint: string;
 
 const opt = {
@@ -41,7 +39,7 @@ const init = async () => {
     curWallet = new PublicKey(BotConfig.trackWallet);
     signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 1 });
     lastSignature = signatureInfo[0].signature;
-    curState = "None"
+    isBought = false
     curTime = Date.now();
 }
 
@@ -65,13 +63,7 @@ const moniterWallet = async () => {
                     if (sender === curWallet.toString()) {                      
                         if (txAmount <= -BotConfig.threshold * LAMPORTS_PER_SOL) {
                             lastSignature = tx.transaction.signatures[0]
-                            // signatureInfo = await connection.getSignaturesForAddress(curWallet, { until: tx.transaction.signatures[0]});
-                            // const sigs = signatureInfo.filter(sig => !sig.err).map(sig => sig?.signature);
-                            // const txns = await connection.getParsedTransactions(sigs, { maxSupportedTransactionVersion: 0 });
-                            // lastSignature = txns.find(tr => tr.transaction.message.accountKeys[0].pubkey.toString() === curWallet.toString()).transaction.signatures[0]
                             console.log(`\n# Last transaction of new wallet: https://solscan.io/tx/${lastSignature}`)
-
-                            curState = "None"
                             curWallet = new PublicKey(recipient)
                             const log = {
                                 'Signature:': `https://solscan.io/tx/${tx.transaction.signatures}`,
@@ -83,12 +75,14 @@ const moniterWallet = async () => {
                             console.table(log)
                             console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
                         }else if (txAmount <= -BotConfig.oneSol * LAMPORTS_PER_SOL) {
-                            const duration = (tx.blockTime - curTime);
-                            curTime = tx.blockTime
-                            if (duration > maxDuration)
-                                maxDuration = duration
-                            if(duration > 10)
-                                console.log(duration + ' / ' + maxDuration)
+                            if(curToken && isBought){
+                                const duration = (tx.blockTime - curTime);
+                                curTime = tx.blockTime
+                                if (duration > maxDuration)
+                                    maxDuration = duration
+                                if(duration > 10)
+                                    console.log(duration + ' / ' + maxDuration)
+                            }
                         }
 
                     }
@@ -166,8 +160,8 @@ const moniterWallet = async () => {
                             if (frozenToken === BotConfig.onlyFrozenToken) {
                                 curToken = new Token(TOKEN_PROGRAM_ID, baseToken, baseDecimal)
                                 curAmmId = ammid.toString()
-                                if (curState === "None") {
-                                    curState = "Bought"
+                                if (!isBought) {
+                                    isBought = true
                                     await buyToken(curToken, curAmmId)
                                     progressBar.start(initialPrice, 0);
                                 }
@@ -178,28 +172,26 @@ const moniterWallet = async () => {
                 // if (curToken && curState === "Bought") {
 
                     const t = (tx.blockTime - curTime)
-                    if (t > 30.0) {
-                        curTime = tx.blockTime
-                        console.log(`\n# It seems the stopping time now! Delay: ${t}s / ${maxDuration}s`)
-                        // progressBar.stop()
-                        // sellToken(curToken, curAmmId)
+                    if (t > BotConfig.stoppingTime) {
+                        console.log(`\n# It seems the stopping time now! Delay: ${t}s / ${maxDuration}s at ${tx.blockTime}`)
+                        isBought = false
+                        progressBar.stop()
+                        sellToken(curToken, curAmmId)
                     }
                 // }
             });
         }
 
-        if (curToken && curState === "Bought") {
+        if (curToken && isBought) {
 
             const walletInfs = await getWalletTokenAccount(connection, wallet.publicKey);
             const one = walletInfs.find(i => i.accountInfo.mint.toString() === curToken.mint.toString());
             if (one) {
                 const curPrice = await getPrice(curToken.mint.toString());
                 if (curPrice) {
-                    // const curProfit = Number((curPrice * 100 / initialPrice).toFixed(3))
-                    // console.log(`* TakeProfit: ${curProfit} %`);
                     progressBar.update(curPrice - initialPrice);
                     if (curPrice >= initialPrice * BotConfig.takeProfit || curPrice < initialPrice * BotConfig.loseProfit) {
-                        curState = "Sold"
+                        isBought = false
                         progressBar.stop()
                         sellToken(curToken, curAmmId)
                     }
@@ -239,7 +231,7 @@ const buyToken = async (bt: Token, ammId: string) => {
         checkTxRes()
     } catch (e) {
         console.log(`\n# Error while trying to buy token: ${bt.mint}, ${e}`)
-        curState = "None"
+        isBought = false
     }
 }
 
@@ -278,7 +270,7 @@ const sellToken = async (bt: Token, ammId: string) => {
         }
     } catch (e) {
         console.log(`\n# Error while trying to sell token: ${bt.mint}\n ${e}`)
-        curState = "None"
+        isBought = true
     }
 }
 
