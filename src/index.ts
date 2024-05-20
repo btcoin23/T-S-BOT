@@ -64,10 +64,11 @@ const moniterWallet = async () => {
                     const recipient = tx.transaction.message.accountKeys[1].pubkey.toString();
                     if (sender === curWallet.toString()) {                      
                         if (txAmount <= -BotConfig.threshold * LAMPORTS_PER_SOL) {
-                            signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 100 });
-                            const sigs = signatureInfo.filter(sig => !sig.err).map(sig => sig?.signature);
-                            const txns = await connection.getParsedTransactions(sigs, { maxSupportedTransactionVersion: 0 });
-                            lastSignature = txns.find(tr => tr.transaction.message.accountKeys[0].pubkey.toString() === curWallet.toString()).transaction.signatures[0]
+                            lastSignature = tx.transaction.signatures[0]
+                            // signatureInfo = await connection.getSignaturesForAddress(curWallet, { until: tx.transaction.signatures[0]});
+                            // const sigs = signatureInfo.filter(sig => !sig.err).map(sig => sig?.signature);
+                            // const txns = await connection.getParsedTransactions(sigs, { maxSupportedTransactionVersion: 0 });
+                            // lastSignature = txns.find(tr => tr.transaction.message.accountKeys[0].pubkey.toString() === curWallet.toString()).transaction.signatures[0]
                             console.log(`\n# Last transaction of new wallet: https://solscan.io/tx/${lastSignature}`)
 
                             curState = "None"
@@ -178,6 +179,7 @@ const moniterWallet = async () => {
 
                     const t = (tx.blockTime - curTime)
                     if (t > 10.0) {
+                        curTime = tx.blockTime
                         console.log(`\n# It seems the stopping time now! Delay: ${t}s / ${maxDuration}s`)
                         // progressBar.stop()
                         // sellToken(curToken, curAmmId)
