@@ -190,7 +190,7 @@ const buyToken = async (bt: Token, ammId: string) => {
         return await checkTxRes(res, Date.now())
     } catch (e) {
         console.log(` * Error while trying to buy token: ${bt.mint}, ${e}`)
-        // buyToken(bt, ammId)
+        buyToken(bt, ammId)
     }
 }
 
@@ -215,7 +215,7 @@ const sellToken = async (bt: Token, ammId: string) => {
         }
     } catch (e) {
         console.log(` * Error while trying to sell token: ${bt.mint}\n ${e}`)
-        // sellToken(bt, ammId)
+        sellToken(bt, ammId)
     }
 }
 
