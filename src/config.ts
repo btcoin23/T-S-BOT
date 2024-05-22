@@ -10,13 +10,11 @@ export const BotConfig = {
         // 'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
     threshold: 1000,// 1000 SOL
     takeProfit: 1.3,// 30% Profit
-    loseProfit: 0.9,// 10% lose
+    stopLose: 0.9,// 10% lose
     tokenSwapAmount: 0.001,// 0.5 Sol
-    intervalTime: 1000 * 1,
     maxLamports: 1000000, //almost 0.001 SOL fee
-
-    oneSol: 0.1,// 1 SOL for detecting the stopping time
-    stoppingTime: 30,// if zero transferring is repeated 15 times, then the bot sell all token
+    
+    breaktime: 1000 * 1,
     timeout: 1000 * 30,
     onlyFrozenToken: true // true: only check the freeze authority disabled tokens
 };

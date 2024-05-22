@@ -3,8 +3,7 @@ import { TOKEN_PROGRAM_ID, Token } from "@raydium-io/raydium-sdk";
 import { getMint } from '@solana/spl-token';
 import { swap } from './swapAmm';
 import { connection, wallet, BotConfig, RAYDIUM_PUBLIC_KEY, DEFAULT_TOKEN } from './config';
-import { getWalletTokenAccount } from './util';
-import { getPrice } from "./getPrice";
+import { getWalletTokenAccount, getPrice } from './util';
 import { SingleBar, Presets } from "cli-progress";
 
 let signatureInfo: ConfirmedSignatureInfo[];
@@ -15,8 +14,6 @@ let initialPrice: number;
 let curWallet: PublicKey;
 let curToken: Token;
 let curAmmId: string;
-// let curTime: number = 0;
-// let maxDuration: number = 0;
 let newTokenMint: string;
 
 const opt = {
@@ -27,7 +24,6 @@ const progressBar = new SingleBar(
     Presets.shades_classic
 );
 
-
 const main = async () => {
     await init()
     moniterWallet()
@@ -37,7 +33,6 @@ const main = async () => {
 const init = async () => {
     curWallet = new PublicKey(BotConfig.trackWallet);
     isBought = false
-    // curTime = 0;
     signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 1 });
     lastSignature = signatureInfo[0].signature;
 }
@@ -64,7 +59,6 @@ const moniterWallet = async () => {
                             lastSignature = tx.transaction.signatures[0]
                             console.log(`\n# Last transaction of new wallet: https://solscan.io/tx/${lastSignature}`)
                             curWallet = new PublicKey(recipient)
-                            // curTime = 0;
                             const log = {
                                 'Signature:': `https://solscan.io/tx/${tx.transaction.signatures}`,
                                 'From:': sender,
@@ -75,16 +69,6 @@ const moniterWallet = async () => {
                             console.table(log)
                             console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
                         } 
-                        // else if (txAmount <= -BotConfig.oneSol * LAMPORTS_PER_SOL) {
-                        //     if (curToken && isBought) {
-                        //         // const duration = (tx.blockTime - curTime);
-                        //         // maxDuration = duration > maxDuration ? duration : maxDuration
-                        //         // if (duration > 20)
-                        //             console.log(duration + ' / ' + maxDuration)
-                        //         curTime = tx.blockTime
-                        //     }
-                        // }
-
                     }
                 } else {
                     const isMinted: any = tx.transaction.message.instructions.find((item: any) =>
@@ -168,16 +152,6 @@ const moniterWallet = async () => {
                         }
                     }
                 }
-                // if (curToken && isBought && curTime > 0) {
-                //     const t = (tx.blockTime - curTime)
-                //     if (t > BotConfig.stoppingTime) {
-                //         console.log(`\n# It seems the stopping time now! Delay: ${t}s / ${maxDuration}s at ${tx.blockTime}`)
-                //         maxDuration = 0
-                //         progressBar.stop()
-                //         await sellToken(curToken, curAmmId)
-                //         isBought = false
-                //     }
-                // }
             });
         }
 
@@ -188,8 +162,7 @@ const moniterWallet = async () => {
                 const curPrice = await getPrice(curToken.mint.toString());
                 if (curPrice) {
                     progressBar.update(curPrice - initialPrice);
-                    if (curPrice >= initialPrice * BotConfig.takeProfit || curPrice < initialPrice * BotConfig.loseProfit) {
-                        // maxDuration = 0
+                    if (curPrice >= initialPrice * BotConfig.takeProfit || curPrice < initialPrice * BotConfig.stopLose) {
                         progressBar.stop()
                         isBought = !await sellToken(curToken, curAmmId)
                     }
@@ -199,7 +172,7 @@ const moniterWallet = async () => {
     } catch (e) {
         console.log(' *', e)
     }
-    setTimeout(moniterWallet, BotConfig.intervalTime);
+    setTimeout(moniterWallet, BotConfig.breaktime);
 }
 
 const buyToken = async (bt: Token, ammId: string) => {
