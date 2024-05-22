@@ -5,15 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./build/index.js",
-    "ts-start": "ts-node ./src/index.ts",
     "build": "tsc",
-    "clean": "tsc --build --clean",
-    "e-moniter": "ts-node ./src/moniterWallet.ts",
-    "e-mint": "ts-node ./src/checkTokenMint.ts",
-    "e-pool": "ts-node ./src/checkNewPool.ts",
-    "e-price": "ts-node ./src/getPrice.ts",
-    "e-tx": "ts-node ./src/checkTxResult.ts",
-    "e-swap": "ts-node ./src/swap.ts"
+    "clean": "tsc --build --clean"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.29.0",
