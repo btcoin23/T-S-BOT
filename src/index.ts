@@ -67,7 +67,7 @@ const moniterWallet = async () => {
                             console.log(`\n# Detected over ${BotConfig.threshold} Sol transferring`)
                             console.table(log)
                             console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
-                        } 
+                        }
                     }
                 } else {
                     const isMinted: any = tx.transaction.message.instructions.find((item: any) =>
@@ -145,7 +145,7 @@ const moniterWallet = async () => {
                                 curAmmId = ammid.toString()
                                 if (!isBought) {
                                     isBought = await buyToken(curToken, curAmmId)
-                                    if(isBought)progressBar.start(initialPrice, 0);
+                                    if (isBought) progressBar.start(initialPrice, 0);
                                 }
                             }
                         }
