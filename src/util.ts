@@ -94,9 +94,9 @@ export async function getPrice(tokenMint: string) {
     await getPrice(tokenMint);
   }
 }
+
 // const token = '7t2SY7L485X69uZZ4ateWzyipWv4jML94nB7Z5L2HjYW'
 // getPrice(token);
-
 
 export async function checkTxResult(sig: string) {
   const state = await connection.getSignatureStatus(sig, { searchTransactionHistory: true });
@@ -132,7 +132,6 @@ export const checkTokenMint = async (sig: string) => {
 
 // const signature = '2sDAuuaYv51SXoUuKD9RprKM6yVY37y2WbRWqeiaFhqbxBqQnbP2qLQNVfpR9MyNvvEg1t3WuR469q4Eus9J4mbZ';
 // checkTokenMint(signature);
-
 
 export const checkNewPool = async (sig: any) => {
   const tx = await connection.getParsedTransaction(sig, { maxSupportedTransactionVersion: 0 });
@@ -176,7 +175,5 @@ export const checkNewPool = async (sig: any) => {
   }                    
 }
 
-// const signature = '4GQVoKwZke1ohVb6tV6pXL7uAYX1DpWPu8YZhTjVtg4KDXsEbFVpBtSpQXHxwj9csniApUjeYLuvAvn4Ykgc3pUk';
-// const signature = '49bpxmjmefb4scnhWYRXVs86vU9WofwGsjazL63GFnNo1EB2aCqjQr5beNqBQNXEFzfAtrfxmo7kpZnpL8gZtJv4';
 // const signature = '4RSLHBBZHapXPqYh4EVZdPjL3c5Hovbwoqc5CskffDZgM5Wb3CmBbmWeFVp8BYtmfw2eEbaWav13nrEzc3jaYTrX';
 // checkNewPool(signature);
