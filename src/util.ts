@@ -141,38 +141,38 @@ export const checkNewPool = async (sig: any) => {
   console.log(tx)
   const createdPool = tx.meta.logMessages?.find((item: string) => item.includes('Create'))
   if (interactRaydium && createdPool) {
-      const ammid = interactRaydium.accounts[4]
-      const baseToken = interactRaydium.accounts[8]
-      const quoteToken = interactRaydium.accounts[9]
+    const ammid = interactRaydium.accounts[4]
+    const baseToken = interactRaydium.accounts[8]
+    const quoteToken = interactRaydium.accounts[9]
 
-      const baseTokenInfo = await getMint(connection, baseToken);
-      const quoteTokenInfo = await getMint(connection, quoteToken);
+    const baseTokenInfo = await getMint(connection, baseToken);
+    const quoteTokenInfo = await getMint(connection, quoteToken);
 
-      const baseDecimal = baseTokenInfo.decimals;
-      const quoteDecimal = quoteTokenInfo.decimals;
+    const baseDecimal = baseTokenInfo.decimals;
+    const quoteDecimal = quoteTokenInfo.decimals;
 
-      const res = tx.meta.logMessages?.find(item => item.includes("InitializeInstruction2"));
-      const keyValuePairs = res.split(", ");
+    const res = tx.meta.logMessages?.find(item => item.includes("InitializeInstruction2"));
+    const keyValuePairs = res.split(", ");
 
-      let pcAmount = null;
-      let coinAmount = null;
-      for (let i = 0; i < keyValuePairs.length; i++) {
-          const pair = keyValuePairs[i].split(": ");
+    let pcAmount = null;
+    let coinAmount = null;
+    for (let i = 0; i < keyValuePairs.length; i++) {
+      const pair = keyValuePairs[i].split(": ");
 
-          if (pair[0] === "init_pc_amount") {
-              pcAmount = parseInt(pair[1], 10); // Convert the value to an integer
-          } else if (pair[0] === "init_coin_amount") {
-              coinAmount = parseInt(pair[1], 10); // Convert the value to an integer
-          }
+      if (pair[0] === "init_pc_amount") {
+        pcAmount = parseInt(pair[1], 10); // Convert the value to an integer
+      } else if (pair[0] === "init_coin_amount") {
+        coinAmount = parseInt(pair[1], 10); // Convert the value to an integer
       }
+    }
 
-      const initialPrice = pcAmount / (coinAmount * (10 ** (quoteDecimal - baseDecimal))) 
+    const initialPrice = pcAmount / (coinAmount * (10 ** (quoteDecimal - baseDecimal)))
 
-      console.log(`\n* Txid: ${tx.transaction.signatures} -> New Pool is created`);
-      console.log(` - AMMID: ${ammid}`);
-      console.log(` - Base token: ${baseToken}, Decimal: ${baseDecimal.toString()}, StartingPrice: ${initialPrice}`);
-      console.log(` - Quote token: ${quoteToken}, Decimal: ${quoteDecimal.toString()}`);
-  }                    
+    console.log(`\n* Txid: ${tx.transaction.signatures} -> New Pool is created`);
+    console.log(` - AMMID: ${ammid}`);
+    console.log(` - Base token: ${baseToken}, Decimal: ${baseDecimal.toString()}, StartingPrice: ${initialPrice}`);
+    console.log(` - Quote token: ${quoteToken}, Decimal: ${quoteDecimal.toString()}`);
+  }
 }
 
 // const signature = '4RSLHBBZHapXPqYh4EVZdPjL3c5Hovbwoqc5CskffDZgM5Wb3CmBbmWeFVp8BYtmfw2eEbaWav13nrEzc3jaYTrX';

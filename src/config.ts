@@ -6,14 +6,14 @@ import 'dotenv/config';
 //---------------------------------------------------------------- User setting
 export const BotConfig = {
     trackWallet: '39azUYFWPz3VHgKCf3VChUwbpURdCHRxjWVowf5jUJjg',
-        // 'N22uCb2j9GriychZJzh9t5idaddLdkHhANNH27GUPYC',
-        // 'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
+    // 'N22uCb2j9GriychZJzh9t5idaddLdkHhANNH27GUPYC',
+    // 'FjEKhdhqskSHUgkTxuDA55WoynHx6UyCxxS7caX1QXJi',
     threshold: 1000,// 1000 SOL
     takeProfit: 1.3,// 30% Profit
     stopLose: 0.9,// 10% lose
     tokenSwapAmount: 0.001,// 0.5 Sol
     maxLamports: 1000000, //almost 0.001 SOL fee
-    
+
     breaktime: 1000 * 1,
     timeout: 1000 * 30,
     onlyFrozenToken: true // true: only check the freeze authority disabled tokens
@@ -34,4 +34,4 @@ export const DEFAULT_TOKEN = {
     'USDC': new Token(TOKEN_PROGRAM_ID, new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'), 6, 'USDC', 'USDC'),
     'RAY': new Token(TOKEN_PROGRAM_ID, new PublicKey('4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R'), 6, 'RAY', 'RAY'),
     'TEST': new Token(TOKEN_PROGRAM_ID, new PublicKey('KfsoGQPrCP47zYDekWZPjQsLTwMKC3keHxrKtQAFF7g'), 8, 'TEST', 'TEST'),
-  }
+}
