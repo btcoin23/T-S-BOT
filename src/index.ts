@@ -7,7 +7,6 @@ import { getWalletTokenAccount } from './util';
 import { getPrice } from "./getPrice";
 import { SingleBar, Presets } from "cli-progress";
 
-
 let signatureInfo: ConfirmedSignatureInfo[];
 let lastSignature: string;
 
@@ -16,8 +15,8 @@ let initialPrice: number;
 let curWallet: PublicKey;
 let curToken: Token;
 let curAmmId: string;
-let curTime: number = 0;
-let maxDuration: number = 0;
+// let curTime: number = 0;
+// let maxDuration: number = 0;
 let newTokenMint: string;
 
 const opt = {
@@ -38,7 +37,7 @@ const main = async () => {
 const init = async () => {
     curWallet = new PublicKey(BotConfig.trackWallet);
     isBought = false
-    curTime = 0;
+    // curTime = 0;
     signatureInfo = await connection.getSignaturesForAddress(curWallet, { limit: 1 });
     lastSignature = signatureInfo[0].signature;
 }
@@ -65,7 +64,7 @@ const moniterWallet = async () => {
                             lastSignature = tx.transaction.signatures[0]
                             console.log(`\n# Last transaction of new wallet: https://solscan.io/tx/${lastSignature}`)
                             curWallet = new PublicKey(recipient)
-                            curTime = 0;
+                            // curTime = 0;
                             const log = {
                                 'Signature:': `https://solscan.io/tx/${tx.transaction.signatures}`,
                                 'From:': sender,
@@ -75,15 +74,16 @@ const moniterWallet = async () => {
                             console.log(`\n# Detected over ${BotConfig.threshold} Sol transferring`)
                             console.table(log)
                             console.log(`\n---------- Checking wallet: ${curWallet} ... ----------`);
-                        } else if (txAmount <= -BotConfig.oneSol * LAMPORTS_PER_SOL) {
-                            if (curToken && isBought) {
-                                const duration = (tx.blockTime - curTime);
-                                maxDuration = duration > maxDuration ? duration : maxDuration
-                                if (duration > 20)
-                                    console.log(duration + ' / ' + maxDuration)
-                                curTime = tx.blockTime
-                            }
-                        }
+                        } 
+                        // else if (txAmount <= -BotConfig.oneSol * LAMPORTS_PER_SOL) {
+                        //     if (curToken && isBought) {
+                        //         // const duration = (tx.blockTime - curTime);
+                        //         // maxDuration = duration > maxDuration ? duration : maxDuration
+                        //         // if (duration > 20)
+                        //             console.log(duration + ' / ' + maxDuration)
+                        //         curTime = tx.blockTime
+                        //     }
+                        // }
 
                     }
                 } else {
@@ -161,24 +161,23 @@ const moniterWallet = async () => {
                                 curToken = new Token(TOKEN_PROGRAM_ID, baseToken, baseDecimal)
                                 curAmmId = ammid.toString()
                                 if (!isBought) {
-                                    await buyToken(curToken, curAmmId)
-                                    isBought = true
-                                    progressBar.start(initialPrice, 0);
+                                    isBought = await buyToken(curToken, curAmmId)
+                                    if(isBought)progressBar.start(initialPrice, 0);
                                 }
                             }
                         }
                     }
                 }
-                if (curToken && isBought && curTime > 0) {
-                    const t = (tx.blockTime - curTime)
-                    if (t > BotConfig.stoppingTime) {
-                        console.log(`\n# It seems the stopping time now! Delay: ${t}s / ${maxDuration}s at ${tx.blockTime}`)
-                        maxDuration = 0
-                        progressBar.stop()
-                        await sellToken(curToken, curAmmId)
-                        isBought = false
-                    }
-                }
+                // if (curToken && isBought && curTime > 0) {
+                //     const t = (tx.blockTime - curTime)
+                //     if (t > BotConfig.stoppingTime) {
+                //         console.log(`\n# It seems the stopping time now! Delay: ${t}s / ${maxDuration}s at ${tx.blockTime}`)
+                //         maxDuration = 0
+                //         progressBar.stop()
+                //         await sellToken(curToken, curAmmId)
+                //         isBought = false
+                //     }
+                // }
             });
         }
 
@@ -190,10 +189,9 @@ const moniterWallet = async () => {
                 if (curPrice) {
                     progressBar.update(curPrice - initialPrice);
                     if (curPrice >= initialPrice * BotConfig.takeProfit || curPrice < initialPrice * BotConfig.loseProfit) {
-                        maxDuration = 0
+                        // maxDuration = 0
                         progressBar.stop()
-                        await sellToken(curToken, curAmmId)
-                        isBought = false
+                        isBought = !await sellToken(curToken, curAmmId)
                     }
                 }
             }
@@ -206,6 +204,8 @@ const moniterWallet = async () => {
 
 const buyToken = async (bt: Token, ammId: string) => {
     try {
+        console.log(bt.mint.toString(), ammId)
+        console.log(bt.decimals)
         const res = await swap(DEFAULT_TOKEN.WSOL, bt, ammId, BotConfig.tokenSwapAmount * LAMPORTS_PER_SOL);
         const log = {
             'Signature:': `https://solscan.io/tx/${res}`,
@@ -214,24 +214,10 @@ const buyToken = async (bt: Token, ammId: string) => {
         }
         console.log(`\n# Buying new token`)
         console.table(log)
-        const checkTxRes = async () => {
-            const state = await connection.getSignatureStatus(res, { searchTransactionHistory: true });
-            // console.log(`# checking buying transaction result ${state.value}`)
-            if (state && state.value) {
-                if (state.value.err) {
-                    console.log(`\n# Transaction failed! Sending a transaction again to buy the token: ${bt.mint}`)
-                    buyToken(bt, ammId)
-                } else {
-                    console.log('\n# Transaction succeeded!')
-                }
-            }
-            else
-                setTimeout(checkTxRes, BotConfig.intervalTime);
-        }
-        checkTxRes()
+        return await checkTxRes(res, Date.now())
     } catch (e) {
-        console.log(`\n# Error while trying to buy token: ${bt.mint}, ${e}`)
-        buyToken(bt, ammId)
+        console.log(` * Error while trying to buy token: ${bt.mint}, ${e}`)
+        // buyToken(bt, ammId)
     }
 }
 
@@ -241,36 +227,43 @@ const sellToken = async (bt: Token, ammId: string) => {
         const one = walletInfs.find(i => i.accountInfo.mint.toString() === bt.mint.toString());
         if (one) {
             const bal = one.accountInfo.amount
-            if (Number(bal) > 1000) {
-                const res = await swap(bt, DEFAULT_TOKEN.WSOL, ammId, Number(bal));
-                const log = {
-                    'Signature:': `https://solscan.io/tx/${res}`,
-                    'Token Address:': bt.mint.toString(),
-                    'Amount:': Number(bal).toString()
-                }
-                console.log(`\n# Selling the token`)
-                console.table(log)
-
-                const checkTxRes = async () => {
-                    const state = await connection.getSignatureStatus(res, { searchTransactionHistory: true });
-                    // console.log(`# checking selling transaction result ${state.value}`)
-                    if (state && state.value) {
-                        if (state.value.err) {
-                            console.log(`\n# Transaction failed! Sending a transaction again to sell the token: ${bt.mint}`)
-                            sellToken(bt, ammId)
-                        } else {
-                            console.log('\n# Transaction succeeded!')
-                        }
-                    }
-                    else
-                        setTimeout(checkTxRes, BotConfig.intervalTime);
-                }
-                checkTxRes()
+            const res = await swap(bt, DEFAULT_TOKEN.WSOL, ammId, Number(bal));
+            const log = {
+                'Signature:': `https://solscan.io/tx/${res}`,
+                'Token Address:': bt.mint.toString(),
+                'Amount:': Number(bal).toString()
             }
+            console.log(`\n# Selling the token`)
+            console.table(log)
+            return await checkTxRes(res, Date.now())
+
+        } else {
+            console.log(` * No balance! Selling token is cancelled`)
         }
     } catch (e) {
-        console.log(`\n# Error while trying to sell token: ${bt.mint}\n ${e}`)
-        sellToken(bt, ammId)
+        console.log(` * Error while trying to sell token: ${bt.mint}\n ${e}`)
+        // sellToken(bt, ammId)
+    }
+}
+
+const checkTxRes = async (sig: string, now: number): Promise<boolean> => {
+    const state = await connection.getSignatureStatus(sig, { searchTransactionHistory: true });
+    if (state && state.value) {
+        if (state.value.err) {
+            console.log(` * Transaction failed!`)
+            return false
+        } else {
+            console.log(' * Transaction succeeded!')
+            return true
+        }
+    }
+    else {
+        if ((Date.now() - now) > BotConfig.timeout) {
+            console.log(' * Transaction timeout!')
+            return false
+        }
+        else
+            return await checkTxRes(sig, now);
     }
 }
 
