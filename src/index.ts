@@ -43,8 +43,8 @@ const moniterWallet = async () => {
         if (signatureInfo.length > 0 && lastSignature != signatureInfo[0].signature) {
             lastSignature = signatureInfo[0].signature;
             const sigArray = signatureInfo.filter(sig => !sig.err).map(sig => sig?.signature);
-            const trxs = await connection.getParsedTransactions(sigArray, { maxSupportedTransactionVersion: 0 });
-            const txs = trxs.filter(trx => trx?.transaction)
+            const txns = await connection.getParsedTransactions(sigArray, { maxSupportedTransactionVersion: 0 });
+            const txs = txns.filter(trx => trx?.transaction)
             txs.forEach(async (tx) => {
                 const isTransferred: any = tx.transaction.message.instructions.find((item: any) =>
                     item.parsed?.type === 'transfer'
@@ -239,6 +239,6 @@ const checkTxRes = async (sig: string, now: number): Promise<boolean> => {
     }
 }
 
-main();
+// main();
 
-// sellToken(new Token(TOKEN_PROGRAM_ID, new PublicKey('vxJhBCi6jpiZQjAxp8rN8MeAo2MRr63MvQsGQ4nUSzx'), 8), '3EfxTTYJvfEHEsZAtoAHgPVAT5iuwxKgfy4YPeAcGLzA')
+sellToken(new Token(TOKEN_PROGRAM_ID, new PublicKey('38D23hJXiWv3cz83yeGqfB8GWACzpNMvG2TP2JZ4jp8c'), 8), 'HbKRgGWzu2eQ9c5uQcodENzZhY4LxbPAbXLmjQmuaTZp')

@@ -95,8 +95,8 @@ export async function getPrice(tokenMint: string) {
   }
 }
 
-// const token = '7t2SY7L485X69uZZ4ateWzyipWv4jML94nB7Z5L2HjYW'
-// getPrice(token);
+const token = '7t2SY7L485X69uZZ4ateWzyipWv4jML94nB7Z5L2HjYW'
+getPrice(token);
 
 export async function checkTxResult(sig: string) {
   const state = await connection.getSignatureStatus(sig, { searchTransactionHistory: true });
