@@ -1,4 +1,4 @@
-# Sniper Bot on Solana, Raydium
+# Copy-Trade Bot on Solana, Raydium
 
 This project demonstrates my abilities how to perform the monitering wallet transactions and how to do token swap on the Solana blockchain using Raydium SDK.
 
